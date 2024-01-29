@@ -19,8 +19,9 @@ def stDatabase():
     con.commit()
 
     cur.execute(
-        "CREATE TABLE IF NOT EXISTS product(pid INTEGER PRIMARY KEY AUTOINCREMENT, category TEXT,"
-        "name TEXT, scheme TEXT, price INTEGER, sellingPrice INTEGER, qty INTEGER, totalPrice INTEGER, status TEXT, location TEXT)")
+        "CREATE TABLE IF NOT EXISTS product(pid INTEGER PRIMARY KEY AUTOINCREMENT, cid INTEGER, category TEXT,"
+        "name TEXT, scheme TEXT, price INTEGER, sellingPrice INTEGER, qty INTEGER, totalPrice INTEGER, status TEXT, location TEXT"
+        ", FOREIGN KEY (cid) REFERENCES category(cid))")
     con.commit()
 
     cur.execute(
@@ -28,24 +29,17 @@ def stDatabase():
         "name TEXT, scheme TEXT, price INTEGER, sellingPrice INTEGER, qty INTEGER, totalPrice INTEGER, status TEXT, location TEXT, Date TEXT, Time, TEXT)")
     con.commit()
 
-    # cur.execute('''CREATE TABLE IF NOT EXISTS sellDetails(item_id INTEGER,'''
-    #             '''name TEXT, price INTEGER, qty INTEGER, totalPrice INTEGER, sellerName TEXT, custName TEXT, phoneNo TEXT, location TEXT, discount INTEGER, netPay INTEGER, payType TEXT, sellDate TEXT);''')
-    # con.commit()
-
-    # cur.execute('''CREATE TABLE IF NOT EXISTS creditCustomers(item_id INTEGER,'''
-    #             '''name TEXT, price INTEGER, qty INTEGER, totalPrice INTEGER, sellerName TEXT, custName TEXT, phoneNo TEXT, location TEXT, discount INTEGER, netPay INTEGER, payType TEXT, sellDate TEXT);''')
-    # con.commit()
-
     cur.execute(
         '''CREATE TABLE IF NOT EXISTS returnedItems(item_id INTEGER, category TEXT, item_name TEXT, item_price INTEGER
                                                 , item_qty INTEGER, item_totalPrice INTEGER, item_returnDate TEXT);''')
     con.commit()
 
-    cur.execute('''CREATE TABLE IF NOT EXISTS orders(orderId INTEGER, pid INTEGER, orderItemName TEXT, perItemPrice FLOAT
+    cur.execute('''CREATE TABLE IF NOT EXISTS orders(orderId INTEGER, pid INTEGER, cid INTEGER, orderItemName TEXT, perItemPrice FLOAT
                                                     , orderQty INTEGER, orderTotalPrice FLOAT, orderStatus TEXT
                                                     , orderDiscount FLOAT, orderNetPrice FLOAT, orderPayType TEXT
                                                     , orderCustomerName TEXT, orderCustomerPhone TEXT, orderDate TEXT
-                                                    , orderTime TEXT, FOREIGN KEY (pid) REFERENCES product(pid))''')
+                                                    , orderTime TEXT, FOREIGN KEY (pid) REFERENCES product(pid)
+                                                    , FOREIGN KEY (cid) REFERENCES product(cid))''')
     con.commit()
 
     cur.execute(
@@ -65,11 +59,11 @@ def stDatabase():
     con.commit()
 
     cur.execute(
-        '''CREATE TABLE IF NOT EXISTS shopExpensesNames(expID INTEGER PRIMARY KEY AUTOINCREMENT, expDesc TEXT);''')
+        '''CREATE TABLE IF NOT EXISTS shopExpensesNames(expID INTEGER PRIMARY KEY AUTOINCREMENT, expName TEXT);''')
     con.commit()
 
     cur.execute(
-        '''CREATE TABLE IF NOT EXISTS shopExpenses(expID INTEGER PRIMARY KEY AUTOINCREMENT, expDesc TEXT, expPrice INTEGER, expDate TEXT);''')
+        '''CREATE TABLE IF NOT EXISTS shopExpenses(expID INTEGER PRIMARY KEY AUTOINCREMENT, expName TEXT, expDesc TEXT, expPrice INTEGER, expDate TEXT);''')
     con.commit()
 
 

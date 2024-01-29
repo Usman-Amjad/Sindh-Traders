@@ -13,12 +13,11 @@ from PIL import Image
 class BillClass:
     def __init__(self, root):
         self.root = root
-        self.root.geometry("1290x600+140+80")
+        self.root.geometry("1290x600+140+120")
         self.root.title("Sindh Traders")
-        self.root.config(bg="#333333")
         self.root.resizable(False, False)
 
-        ctk.set_appearance_mode("System")  # Modes: system (default), light, dark
+        ctk.set_appearance_mode("light")  # Modes: system (default), light, dark
         ctk.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
 
         # ===== Style =====
@@ -30,8 +29,10 @@ class BillClass:
         # ===== Variables =====
         self.cat_list = []  # List Variable
         self.custNameList = []
+        self.catIdList = []
         self.fetch_cat_loc()  # Calling Function
         self.scheme = StringVar()
+        self.catId = StringVar()
 
         self.cart_list = []
         self.chk_print = 0
@@ -45,10 +46,12 @@ class BillClass:
         # self.logoImage = Label(self.root, image=self.logo).place(x=5, y=5, width=120, height=80)
 
         # ====== Clock ======
-        self.lbl_clock = ctk.CTkLabel(self.root,
+        self.clockFrame = ctk.CTkFrame(self.root, bg_color="#eeba2b", corner_radius=5)
+        self.clockFrame.place(x=0, y=62, relwidth=1, height=30)
+        self.lbl_clock = ctk.CTkLabel(self.clockFrame,
                                       text="Welcome To Stock Management System\t\t Date:DD-MM-YYYY\t\t Time: ""HH:MM:SS",
-                                      font=("times new roman", 15))
-        self.lbl_clock.place(x=0, y=62, relwidth=1, height=30)
+                                      font=("Bell Gothic Std Black", 15))
+        self.lbl_clock.place(x=0, y=0, relwidth=1, height=30)
 
         # ====== Product Frame ======
         # ===== Search Variables =====
@@ -58,7 +61,7 @@ class BillClass:
         self.var_search = StringVar()
         self.search_cat = StringVar()
 
-        self.ProductFrame1 = ctk.CTkFrame(self.root)
+        self.ProductFrame1 = ctk.CTkFrame(self.root, border_width=2, border_color="#e6b42b")
         self.ProductFrame1.place(relx=0.001, rely=0.147, width=500, height=580)
 
         self.pTitle = ctk.CTkLabel(self.ProductFrame1, text="All Products", font=("Brush Script MT", 30, "bold"))
@@ -68,24 +71,25 @@ class BillClass:
         self.ProductFrame2 = ctk.CTkFrame(self.ProductFrame1)
         self.ProductFrame2.place(relx=0.01, rely=0.08, width=490, height=100)
         self.lbl_search = ctk.CTkLabel(self.ProductFrame2, text="Search Product | By Category",
-                                       font=("Agency FB", 20, "bold"))
-        self.lbl_search.place(x=2, y=5)
+                                       font=("Bell Gothic Std Black", 15, "bold"))
+        self.lbl_search.place(x=5, y=5)
 
-        cmb_search = ctk.CTkComboBox(self.ProductFrame2, variable=self.var_searchby,
-                                     values=("Select", "Category", "Location", "Name"), state='readonly',
-                                     justify=CENTER, fg_color=("#333333"), text_color=("#3c3c3c"),
-                                     font=("Agency FB", 20))
+        cmb_search = ctk.CTkOptionMenu(self.ProductFrame2, variable=self.var_searchby, dropdown_fg_color="#fff",
+                                       dropdown_hover_color="light blue", dropdown_text_color="#000",
+                                       values=("Select", "Category", "Location", "Name"), state='readonly',
+                                       text_color="#fff",
+                                       font=("Bell Gothic Std Black", 18))
         cmb_search.place(relx=0.01, rely=0.55, width=160, height=35)
 
         txt_search = ctk.CTkEntry(self.ProductFrame2, textvariable=self.var_searchtxt,
-                                  font=("goudy old style", 20)).place(
-            relx=0.35, rely=0.55, width=160, height=35)
+                                  font=("Bell Gothic Std Black", 20)).place(
+            relx=0.365, rely=0.55, width=160, height=35)
 
-        self.searchIcon = ctk.CTkImage(Image.open("images/search.png"), size=(30, 30))
+        self.searchIcon = ctk.CTkImage(Image.open("images/search.png"), size=(25, 25))
         self.btn_search = ctk.CTkButton(self.ProductFrame2, text="Search", image=self.searchIcon, command=self.search,
-                                        font=("goudy old style", 15), width=100, height=20, border_width=0,
-                                        corner_radius=8, cursor="hand2")
-        self.btn_search.place(x=280, y=35)
+                                        font=("Bell Gothic Std Black", 15), border_width=0,
+                                        corner_radius=5, cursor="hand2")
+        self.btn_search.place(x=280, y=44, width=130, height=35)
 
         # ===== Product Detail Frame =====
         self.ProductFrame3 = ctk.CTkFrame(self.ProductFrame1)
@@ -95,11 +99,11 @@ class BillClass:
                              rowheight=30,
                              font=("Arial", 17))
         self.style.map("Treeview", background=[("selected", "#0078D7")])  # added blue color when a row is selected
-        self.style.configure("Treeview.Heading", font=('Constantia', 20))
+        self.style.configure("Treeview.Heading", font=('Bell Gothic Std Black', 20))
         self.style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])  # Remove the borders
 
         self.Product_Table = ttk.Treeview(self.ProductFrame3, style='Treeview', columns=(
-            "pid", "category", "name", "scheme", "sellingPrice", "qty"))
+            "cid", "pid", "category", "name", "scheme", "sellingPrice", "qty"))
         for column in self.Product_Table["columns"]:
             self.Product_Table.column(column, anchor=CENTER)
 
@@ -111,6 +115,7 @@ class BillClass:
         scrollx.pack(side=BOTTOM, fill=X)
         self.Product_Table.configure(xscrollcommand=scrollx.set)
 
+        self.Product_Table.heading("cid", text="CID")
         self.Product_Table.heading("pid", text="PID")
         self.Product_Table.heading("category", text="Category")
         self.Product_Table.heading("name", text="Name")
@@ -120,6 +125,7 @@ class BillClass:
 
         self.Product_Table["show"] = "headings"
 
+        self.Product_Table.column("cid", width=50)
         self.Product_Table.column("pid", width=50)
         self.Product_Table.column("category", width=150)
         self.Product_Table.column("name", width=150)
@@ -128,41 +134,44 @@ class BillClass:
         self.Product_Table.column("qty", width=100)
 
         self.Product_Table.pack(fill=BOTH, expand=1)
-        self.Product_Table.bind("<ButtonRelease-1>", self.get_data)
+        self.Product_Table.bind("<ButtonRelease-1>", self.getData)
 
         self.lbl_note = ctk.CTkLabel(self.ProductFrame1, text="Note: Enter 0 Quantity to remove the product from cart",
-                                     font=("goudy old style", 17, 'bold'), anchor="n")
+                                     font=("Bell Gothic Std Black", 14, 'bold'))
         self.lbl_note.pack(side=BOTTOM, fill=X)
 
         # ===== Customer Details Frame =====
-        self.var_cname = StringVar()
+        self.var_cname = StringVar(value="None")
         self.var_contact = StringVar()
         self.paymentType = StringVar(value="Select")
 
-        self.CustomerFrame = ctk.CTkFrame(self.root, width=500, height=70)
+        self.CustomerFrame = ctk.CTkFrame(self.root, border_width=2, border_color="#e6b42b", width=500, height=70)
         self.CustomerFrame.place(relx=0.315, rely=0.147)
 
-        self.lblPaymentType = ctk.CTkLabel(self.CustomerFrame, text="Payment Type", font=("Agency FB", 20))
+        self.lblPaymentType = ctk.CTkLabel(self.CustomerFrame, text="Payment Type", font=("Bell Gothic Std Black", 15))
         self.lblPaymentType.place(relx=0.01, rely=0.07)
-        cmbPayType = ctk.CTkComboBox(self.CustomerFrame, font=("times new roman", 18), variable=self.paymentType,
-                                     values=["Select", "Credit", "Debit"], state="readonly", justify=CENTER, width=140,
-                                     fg_color=("#333333"), text_color=("#3c3c3c"))
+        cmbPayType = ctk.CTkOptionMenu(self.CustomerFrame, font=("Bell Gothic Std Black", 18),
+                                       variable=self.paymentType,
+                                       values=["Select", "Credit", "Debit"], dropdown_fg_color="#fff",
+                                       dropdown_hover_color="light blue", dropdown_text_color="#000", state='readonly',
+                                       text_color="#fff")
         cmbPayType.place(relx=0.22, rely=0.09)
 
-        self.lbl_name = ctk.CTkLabel(self.CustomerFrame, text="Name", font=("Agency FB", 20))
+        self.lbl_name = ctk.CTkLabel(self.CustomerFrame, text="Name", font=("Bell Gothic Std Black", 16))
         self.lbl_name.place(relx=0.01, rely=0.5)
-        cmbCustName = ctk.CTkComboBox(self.CustomerFrame, font=("times new roman", 20), variable=self.var_cname,
-                                      values=self.custNameList, state='readonly', justify=CENTER, width=170,
-                                      fg_color=("#333333"), text_color=("#3c3c3c"))
+        cmbCustName = ctk.CTkOptionMenu(self.CustomerFrame, font=("Bell Gothic Std Black", 18), variable=self.var_cname,
+                                        values=self.custNameList, dynamic_resizing=True, dropdown_fg_color="#fff",
+                                        dropdown_hover_color="light blue", dropdown_text_color="#000", state='readonly',
+                                        text_color="#fff")
         cmbCustName.place(relx=0.22, rely=0.55)
 
-        self.lbl_contact = ctk.CTkLabel(self.CustomerFrame, text="Contact No.", font=("Agency FB", 20))
+        self.lbl_contact = ctk.CTkLabel(self.CustomerFrame, text="Contact No.", font=("Bell Gothic Std Black", 15))
         self.lbl_contact.place(relx=0.57, rely=0.55)
         txt_contact = ctk.CTkEntry(self.CustomerFrame, textvariable=self.var_contact, width=130,
-                                   font=("times new roman", 18)).place(relx=0.72, rely=0.55)
+                                   font=("times new roman", 18)).place(relx=0.735, rely=0.55)
 
         # ===== Cal Cart Frame =====
-        self.Cal_Cart_Frame = ctk.CTkFrame(self.root, width=500, height=285)
+        self.Cal_Cart_Frame = ctk.CTkFrame(self.root, border_width=2, border_color="#e6b42b", width=500, height=285)
         self.Cal_Cart_Frame.place(relx=0.315, rely=0.266)
 
         # ===== Calculator Frame =====
@@ -172,7 +181,7 @@ class BillClass:
         self.Cal_Frame.place(x=5, y=10, width=268, height=340)
 
         txt_cal_input = Entry(self.Cal_Frame, textvariable=self.var_cal_input, bg='#333333', fg='#333333',
-                              font=("arial", 15, "bold"), width=21, bd=8,
+                              font=("Bell Gothic Std Black", 15, "bold"), width=21, bd=8,
                               relief=GROOVE, state='readonly', justify=RIGHT)
         txt_cal_input.grid(row=0, columnspan=4)
         txt_cal_input.focus()
@@ -266,18 +275,18 @@ class BillClass:
         self.cart_Frame.place(relx=0.45, rely=0.02, width=340, height=340)
 
         self.cartTitle = ctk.CTkLabel(self.cart_Frame, text="Cart\t          Total Products: [0]",
-                                      font=("goudy old style", 18, 'bold'))
+                                      font=("Bell Gothic Std Black", 17))
         self.cartTitle.pack(side=TOP, fill=X)
 
         self.style.configure("Treeview", background="#333333", foreground="white", fieldbackground="#333333",
                              rowheight=30,
                              font=("Arial", 17))
         self.style.map("Treeview", background=[("selected", "#0078D7")])  # added blue color when a row is selected
-        self.style.configure("Treeview.Heading", font=('Constantia', 15))
+        self.style.configure("Treeview.Heading", font=('Bell Gothic Std Black', 15))
         self.style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])  # Remove the borders
 
         self.CartTable = ttk.Treeview(self.cart_Frame, style='Treeview',
-                                      columns=("pid", "name", "scheme", "price", "qty"))
+                                      columns=("pid", "cid", "name", "scheme", "price", "qty"))
         for column in self.CartTable["columns"]:
             self.CartTable.column(column, anchor=CENTER)
 
@@ -290,6 +299,7 @@ class BillClass:
         self.CartTable.configure(xscrollcommand=scrollx.set)
 
         self.CartTable.heading("pid", text="PID")
+        self.CartTable.heading("cid", text="CID")
         self.CartTable.heading("name", text="Name")
         self.CartTable.heading("scheme", text="Scheme")
         self.CartTable.heading("price", text="Price")
@@ -297,11 +307,12 @@ class BillClass:
 
         self.CartTable["show"] = "headings"
 
-        self.CartTable.column("pid", width=40)
-        self.CartTable.column("name", width=90)
-        self.CartTable.column("scheme", width=90)
-        self.CartTable.column("price", width=90)
-        self.CartTable.column("qty", width=40)
+        self.CartTable.column("pid", width=60, minwidth=60)
+        self.CartTable.column("cid", width=60, minwidth=60)
+        self.CartTable.column("name", width=150, minwidth=150)
+        self.CartTable.column("scheme", width=100, minwidth=100)
+        self.CartTable.column("price", width=100, minwidth=100)
+        self.CartTable.column("qty", width=50, minwidth=50)
 
         self.CartTable.pack(fill=BOTH, expand=1)
         self.CartTable.bind("<ButtonRelease-1>", self.get_data_cart)
@@ -313,83 +324,98 @@ class BillClass:
         self.var_qty = StringVar()
         self.var_stock = StringVar()
 
-        self.Add_CartWidgetsFrame = ctk.CTkFrame(self.root, width=500, height=104)
+        self.Add_CartWidgetsFrame = ctk.CTkFrame(self.root, border_width=2, border_color="#e6b42b", width=500,
+                                                 height=104)
         self.Add_CartWidgetsFrame.place(relx=0.315, rely=0.745)
 
         self.lbl_p_name = ctk.CTkLabel(self.Add_CartWidgetsFrame, text="Product Name",
-                                       font=("times new roman", 18, 'bold'))
+                                       font=("Bell Gothic Std Black", 18))
         self.lbl_p_name.place(relx=0.01, rely=0.05)
-        txt_p_name = ctk.CTkEntry(self.Add_CartWidgetsFrame, textvariable=self.var_pname, font=("times new roman", 17),
+        txt_p_name = ctk.CTkEntry(self.Add_CartWidgetsFrame, textvariable=self.var_pname,
+                                  font=("Bell Gothic Std Black", 17),
                                   state='readonly', width=190, height=22).place(relx=0.01, rely=0.3)
 
         self.lbl_p_price = ctk.CTkLabel(self.Add_CartWidgetsFrame, text="Price Per Qty",
-                                        font=("times new roman", 18, 'bold'))
+                                        font=("Bell Gothic Std Black", 18))
         self.lbl_p_price.place(relx=0.42, rely=0.05)
         txt_p_price = ctk.CTkEntry(self.Add_CartWidgetsFrame, textvariable=self.var_price,
-                                   font=("times new roman", 17), width=150, height=22).place(relx=0.41, rely=0.3)
+                                   font=("Bell Gothic Std Black", 17), width=150, height=22).place(relx=0.41, rely=0.3)
 
-        self.lbl_p_qty = ctk.CTkLabel(self.Add_CartWidgetsFrame, text="Quantity", font=("times new roman", 18, 'bold'))
+        self.lbl_p_qty = ctk.CTkLabel(self.Add_CartWidgetsFrame, text="Quantity", font=("Bell Gothic Std Black", 18))
         self.lbl_p_qty.place(relx=0.74, rely=0.05)
         self.txt_p_qty = ctk.CTkEntry(self.Add_CartWidgetsFrame, textvariable=self.var_qty,
-                                      font=("times new roman", 17), width=120, height=22)
+                                      font=("Bell Gothic Std Black", 17), width=120, height=22)
         self.txt_p_qty.place(relx=0.74, rely=0.3)
 
         self.lbl_instock = ctk.CTkLabel(self.Add_CartWidgetsFrame, text="In Stock",
-                                        font=("times new roman", 15, 'bold'))
+                                        font=("Bell Gothic Std Black", 15, 'bold'))
         self.lbl_instock.place(relx=0.01, rely=0.67)
 
         btn_clear_cart = ctk.CTkButton(self.Add_CartWidgetsFrame, text="Clear", command=self.clear_cart,
-                                       font=("times new roman", 17, "bold"), cursor="hand2", width=130, height=30)
-        btn_clear_cart.place(relx=0.37, rely=0.65)
+                                       font=("Bell Gothic Std Black", 17), cursor="hand2")
+        btn_clear_cart.place(relx=0.45, rely=0.65, width=130, height=35)
 
         btn_add_cart = ctk.CTkButton(self.Add_CartWidgetsFrame, text="Add | Update Cart",
-                                     font=("times new roman", 17, "bold"), cursor="hand2", width=160, height=30)
-        btn_add_cart.place(relx=0.65, rely=0.65)
+                                     font=("Bell Gothic Std Black", 17), cursor="hand2")
+        btn_add_cart.place(relx=0.685, rely=0.65, width=185, height=35)
         btn_add_cart.bind("<Return>", self.add_update_cart)
         btn_add_cart.bind("<ButtonRelease-1>", self.add_update_cart)
 
         # ===== Billing Area =====
-        self.billFrame = ctk.CTkFrame(self.root)
-        self.billFrame.place(relx=0.707, rely=0.147, width=470, height=439)
+        self.txt_disc = IntVar()
+        self.radio_var = IntVar(value=1)
 
-        self.BTitle = ctk.CTkLabel(self.billFrame, text="Customer Bill Area", font=("Brush Script MT", 30, "bold"))
-        self.BTitle.pack(side=TOP, fill=X)
+        self.billFrame = ctk.CTkFrame(self.root, border_width=2, border_color="#e6b42b")
+        self.billFrame.place(relx=0.707, rely=0.147, width=470, height=250)
+
+        # self.BTitle = ctk.CTkLabel(self.billFrame, text="Customer Bill Area", font=("Brush Script MT", 30, "bold"))
+        # self.BTitle.pack(side=TOP, fill=X)
+
+        self.lbl_amnt = ctk.CTkLabel(self.billFrame, text="Bill Amount:   Rs. 0.0", font=("Bell Gothic Std Black", 20),
+                                     anchor="w")
+        self.lbl_amnt.place(relx=0.05, rely=0.07, width=350, height=50)
+
+        radiobutton_1 = ctk.CTkRadioButton(self.billFrame, text="Percentage%", border_width_checked=4,
+                                           radiobutton_width=15, radiobutton_height=15, variable=self.radio_var,
+                                           value=1)
+        radiobutton_1.place(relx=0.35, rely=0.35, width=130, height=30)
+        radiobutton_2 = ctk.CTkRadioButton(self.billFrame, text="Value", border_width_checked=4,
+                                           radiobutton_width=15, radiobutton_height=15, variable=self.radio_var,
+                                           value=2)
+        radiobutton_2.place(relx=0.35, rely=0.5, width=130, height=30)
+
+        self.lbl_discount = ctk.CTkLabel(self.billFrame, text="Discount:  ", font=("Bell Gothic Std Black", 20))
+        self.lbl_discount.place(relx=0.05, rely=0.35, width=120, height=50)
+        self.txt_discount = Entry(self.billFrame, textvariable=self.txt_disc, font=("goudy old style", 20, "bold"),
+                                  justify='center')
+        self.txt_discount.place(relx=0.65, rely=0.4, width=100, height=35)
+
+        self.lbl_net_pay = ctk.CTkLabel(self.billFrame, text="Net Pay:         Rs. 0.0",
+                                        font=("Bell Gothic Std Black", 20), anchor="w")
+        self.lbl_net_pay.place(relx=0.05, rely=0.68, width=350, height=50)
 
         # ===== Billing Buttons =====
-        self.txt_disc = IntVar()
+        self.billMenuFrame = ctk.CTkFrame(self.root, border_width=2, border_color="#e6b42b")
+        self.billMenuFrame.place(relx=0.707, rely=0.49, width=470, height=100)
 
-        self.billMenuFrame = ctk.CTkFrame(self.root)
-        self.billMenuFrame.place(relx=0.707, rely=0.735, width=470, height=140)
-
-        self.lbl_amnt = ctk.CTkLabel(self.billMenuFrame, text="Bill Amount\n[0]", font=("goudy old style", 20, "bold"))
-        self.lbl_amnt.place(relx=0.03, rely=0.07, width=130, height=70)
-
-        self.lbl_discount = ctk.CTkLabel(self.billMenuFrame, text="Discount\n", font=("goudy old style", 20, "bold"))
-        self.lbl_discount.place(relx=0.35, rely=0.07, width=120, height=70)
-        txt_discount = Entry(self.billMenuFrame, textvariable=self.txt_disc,
-                             font=("goudy old style", 20, "bold"), justify='center').place(relx=0.4, rely=0.35,
-                                                                                           width=75, height=30)
-
-        self.lbl_net_pay = ctk.CTkLabel(self.billMenuFrame, text="Net Pay\n[0]", font=("goudy old style", 20, "bold"))
-        self.lbl_net_pay.place(relx=0.64, rely=0.07, width=158, height=70)
-
-        self.clearIcon = ctk.CTkImage(Image.open("images/clear.png"), size=(30, 30))
+        self.clearIcon = ctk.CTkImage(Image.open("images/clear.png"), size=(25, 25))
         self.btn_clear_all = ctk.CTkButton(self.billMenuFrame, text="Clear All", compound=RIGHT,
-                                           font=("times new roman", 15, 'bold'), image=self.clearIcon,
+                                           font=("Bell Gothic Std Black", 15, 'bold'), image=self.clearIcon,
                                            command=self.clear_all, cursor="hand2")
-        self.btn_clear_all.place(relx=0.36, rely=0.61, width=110)
+        self.btn_clear_all.place(relx=0.36, rely=0.5, width=130)
 
-        self.billIcon = ctk.CTkImage(Image.open("images/bill.png"), size=(30, 30))
+        self.billIcon = ctk.CTkImage(Image.open("images/bill.png"), size=(25, 25))
         self.btn_generate = ctk.CTkButton(self.billMenuFrame, text="Save Bill", compound=RIGHT,
                                           command=self.billPage,
-                                          font=("times new roman", 15, 'bold'), image=self.billIcon, cursor="hand2")
-        self.btn_generate.place(relx=0.68, rely=0.61, width=120)
+                                          font=("Bell Gothic Std Black", 15, 'bold'), image=self.billIcon,
+                                          cursor="hand2")
+        self.btn_generate.place(relx=0.68, rely=0.5, width=130)
 
         # ===== Footer =====
         self.footer = ctk.CTkLabel(self.root,
                                    text="Sindh Distribution - Stock Management System | Developed By UA\nFor any Technical Issue contact: "
                                         "+923412800010",
-                                   font=("times new roman", 18))
+                                   font=("Bell Gothic Std Black", 18))
         self.footer.pack(side=BOTTOM, fill=X)
 
         self.show()
@@ -399,11 +425,20 @@ class BillClass:
 
     def fetch_cat_loc(self):
         try:
+            self.catIdList.append("Empty")
             self.cat_list.append("Empty")
             self.custNameList.append("Empty")
 
             con = sqlite3.connect(database=r'std.db')
             cur = con.cursor()
+
+            cur.execute("SELECT cid FROM category")
+            catIdList = cur.fetchall()
+            if len(catIdList) > 0:
+                del self.catIdList[:]
+                self.catIdList.append("Select")
+                for i in catIdList:
+                    self.catIdList.append(i[0])
 
             cur.execute("SELECT name FROM category")
             loc = cur.fetchall()
@@ -420,6 +455,9 @@ class BillClass:
                 self.custNameList.append("Select")
                 for i in name:
                     self.custNameList.append(i[0])
+
+            conn = sqlite3.connect(database=r'std.db')
+            cursor = conn.cursor()
 
         except Exception as ex:
             messagebox.showerror("Error", f"Error due to : {str(ex)}", parent=self.root)
@@ -439,7 +477,8 @@ class BillClass:
         conn = sqlite3.connect(database=r'std.db')
         cursor = conn.cursor()
         try:
-            cursor.execute("SELECT pid, category, name, scheme, sellingPrice, qty FROM product WHERE status='Active'")
+            cursor.execute(
+                "SELECT cid, pid, category, name, scheme, sellingPrice, qty FROM product WHERE status='Active'")
             rows = cursor.fetchall()
             self.Product_Table.delete(*self.Product_Table.get_children())
             for row in rows:
@@ -466,20 +505,22 @@ class BillClass:
         except Exception as ex:
             messagebox.showerror("Error", f"Error due to : {str(ex)}", parent=self.root)
 
-    def get_data(self, ev):
+    def getData(self, ev):
         try:
             f = self.Product_Table.focus()
             content = (self.Product_Table.item(f))
             row = content['values']
-            self.var_pid.set(row[0])
-            self.var_pname.set(row[2])
-            self.scheme.set(row[3])
-            self.var_price.set(row[4])
-            self.lbl_instock.configure(text=f"In Stock [{str(row[5])}]")
-            self.var_stock.set(row[5])
+            self.var_pid.set(row[1])
+            self.catId.set(row[0])
+            self.var_pname.set(row[3])
+            self.scheme.set(row[4])
+            self.var_price.set(row[5])
+            self.lbl_instock.configure(text=f"In Stock [{str(row[6])}]")
+            self.var_stock.set(row[6])
             self.var_qty.set('1')
-            self.search_cat.set(row[1])
+            self.search_cat.set(row[2])
             self.txt_p_qty.focus()
+            self.txt_p_qty.select_range(0, END)
         except (Exception,):
             pass
 
@@ -489,11 +530,12 @@ class BillClass:
             content = (self.CartTable.item(f))
             row = content['values']
             self.var_pid.set(row[0])
-            self.var_pname.set(row[1])
-            self.var_price.set(row[2])
-            self.var_qty.set(row[3])
-            self.lbl_instock.config(text=f"In Stock [{str(row[5])}]", bg='#333333', fg='white')
-            self.var_stock.set(row[5])
+            self.catId.set(row[1])
+            self.var_pname.set(row[2])
+            self.var_price.set(row[4])
+            self.var_qty.set(row[5])
+            self.lbl_instock.config(text=f"In Stock [{str(row[7])}]", bg='#333333', fg='white')
+            self.var_stock.set(row[7])
         except (Exception,):
             pass
 
@@ -506,14 +548,11 @@ class BillClass:
             elif float(self.var_qty.get()) > float(self.var_stock.get()):
                 messagebox.showerror("Error", "Invalid Quantity", parent=self.root)
             else:
-                conn = sqlite3.connect(database=r'std.db')
-                cursor = conn.cursor()
-
                 billAmt = float(self.var_price.get()) * float(self.var_qty.get())
                 price_cal = self.var_price.get()
-                cart_data = [self.var_pid.get(), self.var_pname.get(), self.scheme.get(), price_cal, self.var_qty.get(),
-                             self.var_stock.get(),
-                             billAmt, self.search_cat.get()]
+                cart_data = [self.var_pid.get(), self.catId.get(), self.var_pname.get(), self.scheme.get(), price_cal,
+                             self.var_qty.get(),
+                             self.var_stock.get(), billAmt, self.search_cat.get()]
 
                 # ===== Update Cart =====
                 present = 'no'
@@ -531,7 +570,8 @@ class BillClass:
                         if self.var_qty.get() == "0":
                             self.cart_list.pop(index_)
                         else:
-                            self.cart_list[index_][4] = self.var_qty.get()
+                            self.cart_list[index_][5] = self.var_qty.get()
+                            self.cart_list[index_][-2] = float(self.var_price.get()) * float(self.var_qty.get())
                 else:
                     self.cart_list.append(cart_data)
                 self.show_cart()
@@ -543,13 +583,29 @@ class BillClass:
         try:
             self.bill_amnt = 0
             for row in self.cart_list:
-                self.bill_amnt = self.bill_amnt + (float(row[3]) * float(row[4]))
+                self.bill_amnt = self.bill_amnt + (float(row[4]) * float(row[5]))
 
-            self.lbl_amnt.configure(text=f'Bill Amnt\n{str(self.bill_amnt)}')
-            self.lbl_net_pay.configure(text=f'Net Pay\n{str(self.bill_amnt)}')
+            self.lbl_amnt.configure(text=f'Bill Amount:   Rs. {str(self.bill_amnt)}')
+
+            self.txt_discount.bind("<KeyRelease>", lambda event: self.update_net_pay())
+
             self.cartTitle.configure(text=f"Cart\t          Total Products: [{str(len(self.cart_list))}]")
         except (Exception,):
             pass
+
+    def update_net_pay(self):
+        try:
+            if self.radio_var.get() == 1:
+                self.discount = float(self.txt_disc.get())
+                self.net_pay = self.bill_amnt - (self.bill_amnt * self.discount / 100)
+                self.lbl_net_pay.configure(text=f'Net Pay:         Rs. {str(self.net_pay)}')
+            elif self.radio_var.get() == 2:
+                self.discount = float(self.txt_disc.get())
+                self.net_pay = self.bill_amnt - self.discount
+                self.lbl_net_pay.configure(text=f'Net Pay:         Rs. {str(self.net_pay)}')
+        except ValueError:
+            # Handle non-numeric input gracefully
+            self.lbl_net_pay.configure(text="Invalid input")
 
     def show_cart(self):
         try:
@@ -560,91 +616,91 @@ class BillClass:
             messagebox.showerror("Error", f"Error due to : {str(ex)}", parent=self.root)
 
     def generate_bill(self):
-        self.addDate = datetime.now().strftime("%m/%d/%Y")
+        self.addDate = datetime.now().strftime("%d/%m/%Y")
         self.addTime = time.strftime("%I:%M:%S")
 
         conn = sqlite3.connect(database=r'std.db')
         cursor = conn.cursor()
 
-        op = messagebox.askyesno("Confirm", "Do you really want to Generate Bill?", parent=self.root)
-        if op is True:
-            if len(self.cart_list) == 0:
-                messagebox.showerror("Error", "Please Add Product to the Cart!!!", parent=self.root)
-            elif len(self.cart_list) != 0:
-                if self.paymentType.get() == 'Select' and self.var_cname.get() == '':
-                    messagebox.showerror('Error', "Please select Payment Type OR Name", parent=self.root)
-                else:
-                    # ===== Bill Top =====
-                    self.bill_top()
-                    # ===== Bill Middle =====
-                    self.bill_middle()
-                    # ===== Bill Bottom =====
-                    self.bill_bottom()
+        if len(self.cart_list) == 0:
+            messagebox.showerror("Error", "Please Add Product to the Cart!!!", parent=self.root)
+        elif len(self.cart_list) != 0:
+            if self.paymentType.get() == 'Select' and self.var_cname.get() == '':
+                messagebox.showerror('Error', "Please select Payment Type OR Name", parent=self.root)
+            else:
+                # ===== Bill Top =====
+                self.bill_top()
+                # ===== Bill Middle =====
+                self.bill_middle()
+                # ===== Bill Bottom =====
+                self.bill_bottom()
 
-                    # ===== Here order will be placed =====
-                    for row in self.cart_list:
-                        pid = row[0]
-                        name = row[1]
-                        itemPrice = row[3]
-                        itemQty = row[4]
-                        totalPrice = row[6]
-                        cursor.execute(
-                            "INSERT INTO orders(orderId, pid, orderItemName, perItemPrice, orderQty, orderTotalPrice, orderDiscount, orderNetPrice, orderPayType, orderCustomerName, orderCustomerPhone, orderDate, orderTime) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                            (
-                                self.invoice,
-                                pid,
-                                name,
-                                itemPrice,
-                                itemQty,
-                                totalPrice,
-                                self.discount,
-                                self.net_pay,
-                                self.paymentType.get(),
-                                self.var_cname.get(),
-                                self.var_contact.get(),
-                                self.addDate,
-                                self.addTime,
-                            ))
-                        conn.commit()
+                # ===== Here order will be placed =====
+                for row in self.cart_list:
+                    pid = row[0]
+                    cid = row[1]
+                    name = row[2]
+                    itemPrice = row[4]
+                    itemQty = row[5]
+                    totalPrice = row[7]
+                    cursor.execute(
+                        "INSERT INTO orders(orderId, pid, cid, orderItemName, perItemPrice, orderQty, orderTotalPrice, orderDiscount, orderNetPrice, orderPayType, orderCustomerName, orderCustomerPhone, orderDate, orderTime) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                        (
+                            self.invoice,
+                            pid,
+                            cid,
+                            name,
+                            itemPrice,
+                            itemQty,
+                            totalPrice,
+                            self.discount,
+                            self.net_pay,
+                            self.paymentType.get(),
+                            self.var_cname.get(),
+                            self.var_contact.get(),
+                            self.addDate,
+                            self.addTime,
+                        ))
+                    conn.commit()
 
-                    # ===== Here If the customer is in Credit then the data will go to customerDetails table and then =====
-                    # ===== when user pay the amount the data will go to customerPaymentDetails Page =====
-                    if self.paymentType.get() == 'Credit':
-                        for i in self.custNameList:
-                            if self.var_cname.get() == i:
-                                cursor.execute(
-                                    "UPDATE customersDetails SET custBalance= custBalance + ? WHERE custName=?",
-                                    (self.net_pay, self.var_cname.get()))
-                                conn.commit()
-                    else:  # ===== Here If the customer is in Debit then the data will go to customerPaymentDetails table directly =====
-                        for i in self.custNameList:
-                            if self.var_cname.get() == i:
-                                cursor.execute(
-                                    "SELECT custId FROM customersDetails WHERE custStatus='Active' AND custName=?",
-                                    (self.var_cname.get(),))
-                                custId = cursor.fetchone()[0]
-                                remainingBalance = int(self.net_pay) - int(self.net_pay)
-                                cursor.execute(
-                                    "INSERT INTO custPaymentDetails(custId, custName, custBalance, custPaid, custTotalBalance, custPayType, custPayDate, custStatus) VALUES(?,?,?,?,?,?,?,?)",
-                                    (
-                                        custId,
-                                        self.var_cname.get(),
-                                        self.net_pay,
-                                        self.net_pay,
-                                        remainingBalance,
-                                        "Debit",
-                                        self.addDate,
-                                        "Active",
+                # ===== Here if the customer is in Credit then the data will go to customerDetails table and then =====
+                # ===== In customer billing page when user pay the amount the data will go to customerPaymentDetails Page =====
+                if self.paymentType.get() == 'Credit':
+                    for i in self.custNameList:
+                        if self.var_cname.get() == i:
+                            cursor.execute(
+                                "UPDATE customersDetails SET custBalance= custBalance + ? WHERE custName=?",
+                                (self.net_pay, self.var_cname.get()))
+                            conn.commit()
+                elif self.paymentType.get() == 'Debit':  # ===== Here If the customer is in Debit then the data will go to customerPaymentDetails table directly =====
+                    for i in self.custNameList:
+                        if self.var_cname.get() == i:
+                            cursor.execute(
+                                "SELECT custId FROM customersDetails WHERE custStatus='Active' AND custName=?",
+                                (self.var_cname.get(),))
+                            custId = cursor.fetchone()[0]
+                            remainingBalance = int(self.net_pay) - int(self.net_pay)
+                            cursor.execute(
+                                "INSERT INTO custPaymentDetails(custId, custName, custBalance, custPaid, custTotalBalance, custPayType, custPayDate, custStatus) VALUES(?,?,?,?,?,?,?,?)",
+                                (
+                                    custId,
+                                    self.var_cname.get(),
+                                    self.net_pay,
+                                    self.net_pay,
+                                    remainingBalance,
+                                    "Debit",
+                                    self.addDate,
+                                    "Active",
 
-                                    ))
-                                conn.commit()
+                                ))
+                            conn.commit()
 
-                    fp = open(f'bill/{str(self.invoice)}.txt', 'w')
-                    fp.write(self.txt_bill_area.get('1.0', END))
-                    fp.close()
-                    messagebox.showinfo('Saved', "Bill has been generated/Save in Backend", parent=self.root)
+                fp = open(f'bill/{str(self.invoice)}.txt', 'w')
+                fp.write(self.txt_bill_area.get('1.0', END))
+                fp.close()
+                messagebox.showinfo('Saved', "Bill has been generated/Save in Backend", parent=self.root)
 
-            self.chk_print = 1
+        self.chk_print = 1
 
     def bill_top(self):
         self.invoice = int(time.strftime("%H%M%S")) + int(time.strftime("%d%m%Y"))
@@ -653,7 +709,7 @@ ST, Main Bazaar, Sanghar\t\t\t\t    Phone No. +923043786863
 {str("=" * 72)}
  Customer Name: {self.var_cname.get()}
  Phone No: {self.var_contact.get()}
- Bill No. {str(self.invoice)}\t\t\tDate: {str(time.strftime("%m/%d/%Y"))}
+ Bill No. {str(self.invoice)}\t\t\tDate: {str(time.strftime("%d/%m/%Y"))}
 {str("=" * 72)}
  Product Name\t\t\tScheme\t\tItem Price\t\tQty\tAmount
 {str("=" * 72)} 
@@ -663,10 +719,17 @@ ST, Main Bazaar, Sanghar\t\t\t\t    Phone No. +923043786863
 
     def bill_bottom(self):
         try:
-            self.discount = float(self.txt_disc.get())
-            self.net_pay = float(self.bill_amnt) - float(self.discount)
+            if self.radio_var.get() == 1:
+                self.discount = float(self.txt_disc.get())
+                self.net_pay = self.bill_amnt - (self.bill_amnt * self.discount / 100)
+            elif self.radio_var.get() == 2:
+                self.discount = float(self.txt_disc.get())
+                self.net_pay = self.bill_amnt - self.discount
+            else:
+                self.discount = 0
+                self.net_pay = self.bill_amnt
             bill_bottom_temp = f'''
-{str("=" * 57)}
+{str("=" * 72)}
  Bill Amount\t\t\t\tRs.{self.bill_amnt}
  Discount\t\t\t\tRs.{self.discount}
  Net Amount\t\t\t\tRs.{self.net_pay}
@@ -682,34 +745,34 @@ ST, Main Bazaar, Sanghar\t\t\t\t    Phone No. +923043786863
             conn = sqlite3.connect(database=r'std.db')
             cursor = conn.cursor()
 
-            self.time_1 = datetime.now().strftime("%m/%d/%Y")
+            self.time_1 = datetime.now().strftime("%d/%m/%Y")
             self.total_price = float(self.var_price.get()) * float(self.var_qty.get())
             if self.search_cat.get() in self.cat_list:
                 for row in self.cart_list:
                     self.pid = row[0]
-                    self.name = row[1]
-                    qty = float(row[5]) - float(row[4])
-                    if float(row[4]) == float(row[5]):
+                    self.name = row[2]
+                    qty = float(row[6]) - float(row[5])
+                    if float(row[5]) == float(row[6]):
                         status = 'Inactive'
-                    if float(row[4]) != float(row[5]):
+                    if float(row[5]) != float(row[6]):
                         status = 'Active'
-                    price = float(row[3]) * float(row[4])
-                    price = str(price)
+                    price = float(row[4]) * float(row[5])
                     self.txt_bill_area.insert(END, "\n " + self.name + "\t\t\t" + self.scheme.get() + "  \t\t" + row[
-                        3] + "\t\t" + row[4] + "\tRs." + price)
+                        4] + "\t\t" + row[5] + "\tRs." + str(price))
 
                     cursor.execute("SELECT price FROM product WHERE pid=?", (
                         self.pid,
                     ))
-                    row = cursor.fetchone()
-                    totalPrice = float(qty) * float(row[0])
+                    productPrice = cursor.fetchone()
+                    totalPrice = float(qty) * float(productPrice[0])
 
                     # ===== Update Qty In Product Table =====
-                    cursor.execute("UPDATE product SET qty=?, totalPrice=?, status=? WHERE pid=?", (
+                    cursor.execute("UPDATE product SET qty=?, totalPrice=?, status=? WHERE pid=? AND name=?", (
                         qty,
                         totalPrice,
                         status,
-                        self.pid
+                        self.pid,
+                        self.name
                     ))
                     conn.commit()
                 conn.close()
@@ -758,23 +821,27 @@ ST, Main Bazaar, Sanghar\t\t\t\t    Phone No. +923043786863
 
     def billPage(self):
         # Create a new window
-        self.new_window = ctk.CTkToplevel(self.root)
-        self.new_window.title("Bill")
-        self.new_window.geometry("1290x600+140+80")
+        op = messagebox.askyesno("Confirm", "Do you really want to Print Bill?", parent=self.root)
+        if op is True:
+            self.new_window = ctk.CTkToplevel(self.root)
+            self.new_window.title("Bill")
+            self.new_window.geometry("1290x600+140+80")
 
-        self.txt_bill_area = ctk.CTkTextbox(self.new_window, font=("goudy old style", 18))
-        self.txt_bill_area.pack(fill=X, ipady=100)
-        self.txt_bill_area.insert(END, self.txt_bill_area)
+            self.txt_bill_area = ctk.CTkTextbox(self.new_window, font=("goudy old style", 18))
+            self.txt_bill_area.pack(fill=X, ipady=150)
+            self.txt_bill_area.insert(END, self.txt_bill_area)
 
-        self.printIcon = ctk.CTkImage(Image.open("images/print.png"), size=(30, 30))
-        self.btnPrint = ctk.CTkButton(self.new_window, text="Print", image=self.printIcon, compound=RIGHT,
-                                      font=("times new roman", 15, 'bold'), cursor="hand2")
-        self.btnPrint.place(relx=0.06, rely=0.61, width=100)
-        self.btnPrint.bind("<Control-p>", self.print_bill)
-        self.btnPrint.bind("<ButtonRelease-1>", self.print_bill)
+            self.printIcon = ctk.CTkImage(Image.open("images/print.png"), size=(30, 30))
+            self.btnPrint = ctk.CTkButton(self.new_window, text="Print", image=self.printIcon, compound=RIGHT,
+                                          font=("times new roman", 15, 'bold'), cursor="hand2")
+            self.btnPrint.place(relx=0.06, rely=0.75, width=100)
+            self.btnPrint.bind("<Control-p>", self.print_bill)
+            self.btnPrint.bind("<ButtonRelease-1>", self.print_bill)
 
-        self.generate_bill()
-        self.new_window.focus_force()
+            self.generate_bill()
+            self.new_window.focus_force()
+        else:
+            messagebox.showinfo('Info', "Please generate bill, to print the receipt", parent=self.root)
 
     def print_bill(self, e):
         try:

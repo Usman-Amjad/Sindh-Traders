@@ -9,12 +9,11 @@ import customtkinter as ctk
 class customersBilling:
     def __init__(self, root):
         self.root = root
-        self.root.geometry("1100x600+220+145")
+        self.root.geometry("970x500+250+190")
         self.root.title("Sindh Traders")
-        # self.root.config(bg="#333333")
         self.root.focus_force()
 
-        ctk.set_appearance_mode("System")  # Modes: system (default), light, dark
+        ctk.set_appearance_mode("light")  # Modes: system (default), light, dark
         ctk.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 
         # ===== Style =====
@@ -24,7 +23,7 @@ class customersBilling:
         icon = PhotoImage(file='images/logo.png')
         self.root.iconphoto(False, icon)
 
-        # ==Declaring Variables==
+        # == Declaring Variables ==
         self.cust_id = StringVar()
         self.cust_name = StringVar()
         self.custDues = StringVar()
@@ -34,8 +33,9 @@ class customersBilling:
         self.varStatus = StringVar()
 
         # ===== Title Label =====
-        lbl_title = ctk.CTkLabel(self.root, text="Payments Recovery", font=("Brush Script MT", 50)).pack(side=TOP,
-                                                                                                         fill=X, pady=0)
+        lbl_title = ctk.CTkLabel(self.root, text="Payments Recovery", font=("Brush Script MT", 50, "bold")).pack(
+            side=TOP,
+            fill=X, pady=0)
 
         # ===== Search Frame =====
         self.searchFrame = ctk.CTkFrame(self.root)
@@ -46,10 +46,13 @@ class customersBilling:
         txt_search = ctk.CTkEntry(self.searchFrame, textvariable=self.sc1, font=("Bell Gothic Std Black", 16)).place(
             x=5, y=35, width=200)
 
-        btn_search = ctk.CTkButton(self.searchFrame, text="Search", command=self.search1, font=("Bell Gothic Std Black", 15),
-                                   cursor="hand2").place(x=285, y=45, width=100, height=30)
-        btn_show_all = ctk.CTkButton(self.searchFrame, text="Show All", command=self.show, font=("Bell Gothic Std Black", 15),
-                                     cursor="hand2").place(x=285, y=10, width=100, height=30)
+        btn_show_all = ctk.CTkButton(self.searchFrame, text="Show All", command=self.show,
+                                     font=("Bell Gothic Std Black", 17),
+                                     text_color="#fff", cursor="hand2", corner_radius=5).place(x=285, y=10, width=120, height=30)
+
+        btn_search = ctk.CTkButton(self.searchFrame, text="Search", command=self.search1,
+                                   font=("Bell Gothic Std Black", 17),
+                                   text_color="#fff", cursor="hand2", corner_radius=5).place(x=285, y=40, width=120, height=30)
 
         # ===== Details Adding Frame =====
         self.frame4 = ctk.CTkFrame(self.root)
@@ -57,26 +60,27 @@ class customersBilling:
 
         titleBg = '#333333'
         titleFg = 'white'
-        titleFont = ('Bell Gothic Std Black', 18)
+        titleFont = ('Bell Gothic Std Black', 17, 'bold')
+        entryFont = ('Bell Gothic Std Black', 17)
 
-        lbl_cust_id = ctk.CTkLabel(self.frame4, text="Id", font=(titleFont)).place(x=20, y=5)
-        txt_cust_id = ctk.CTkEntry(self.frame4, textvariable=self.cust_id, font=(titleFont)).place(x=140, y=5,
-                                                                                                   width=200)
+        lbl_cust_id = ctk.CTkLabel(self.frame4, text="Id", font=titleFont).place(x=20, y=5)
+        txt_cust_id = ctk.CTkEntry(self.frame4, textvariable=self.cust_id, font=entryFont).place(x=140, y=5,
+                                                                                                 width=200)
 
-        lbl_cust_name = ctk.CTkLabel(self.frame4, text="Name", font=(titleFont)).place(x=20, y=45)
-        txt_cust_name = ctk.CTkEntry(self.frame4, textvariable=self.cust_name, font=(titleFont)).place(x=140, y=45,
-                                                                                                       width=200)
+        lbl_cust_name = ctk.CTkLabel(self.frame4, text="Name", font=titleFont).place(x=20, y=45)
+        txt_cust_name = ctk.CTkEntry(self.frame4, textvariable=self.cust_name, font=entryFont).place(x=140, y=45,
+                                                                                                     width=200)
 
-        lbl_cust_dues = ctk.CTkLabel(self.frame4, text="Dues", font=(titleFont)).place(x=20, y=85)
-        txt_cust_dues = ctk.CTkEntry(self.frame4, textvariable=self.custDues, state='readonly', font=(titleFont)).place(
+        lbl_cust_dues = ctk.CTkLabel(self.frame4, text="Dues", font=titleFont).place(x=20, y=85)
+        txt_cust_dues = ctk.CTkEntry(self.frame4, textvariable=self.custDues, state='readonly', font=entryFont).place(
             x=140, y=85, width=200)
 
-        lbl_cust_paid = ctk.CTkLabel(self.frame4, text="Amount Paid", font=(titleFont)).place(x=20, y=125)
-        txt_cust_paid = ctk.CTkEntry(self.frame4, textvariable=self.custPaidAmount, font=(titleFont)).place(x=140,
-                                                                                                            y=125,
-                                                                                                            width=200)
+        lbl_cust_paid = ctk.CTkLabel(self.frame4, text="Amount Paid", font=titleFont).place(x=20, y=125)
+        txt_cust_paid = ctk.CTkEntry(self.frame4, textvariable=self.custPaidAmount, font=entryFont).place(x=140,
+                                                                                                          y=125,
+                                                                                                          width=200)
 
-        lbl_search_date = ctk.CTkLabel(self.frame4, text="Date", font=(titleFont, 17))
+        lbl_search_date = ctk.CTkLabel(self.frame4, text="Date", font=titleFont)
         lbl_search_date.place(x=20, y=165)
         self.cal = DateEntry(self.frame4, selectmode='day', background="#242424", disabledbackground="#242424",
                              bordercolor="#242424", font=("Bell Gothic Std Black", 15, "bold"),
@@ -87,8 +91,8 @@ class customersBilling:
         # ------row3 Add Button
         btnFont = ('Bell Gothic Std Black', 17)
 
-        addBtn = ctk.CTkButton(self.frame4, text="Add", font=(btnFont), cursor="hand2")
-        addBtn.place(x=165, y=220, width=80, height=40)
+        addBtn = ctk.CTkButton(self.frame4, text="Add", font=btnFont, text_color="#fff", cursor="hand2", corner_radius=5)
+        addBtn.place(x=145, y=220, width=100, height=35)
         addBtn.bind("<Return>", self.Add)
         addBtn.bind("<ButtonRelease-1>", self.Add)
 
@@ -98,8 +102,8 @@ class customersBilling:
         # updateBtn.bind("<Return>", self.Update)
         # updateBtn.bind("<ButtonRelease-1>", self.Update)
 
-        deleteBtn = ctk.CTkButton(self.frame4, text="Delete", font=(btnFont), cursor="hand2")
-        deleteBtn.place(x=235, y=220, width=80, height=40)
+        deleteBtn = ctk.CTkButton(self.frame4, text="Delete", font=btnFont, text_color="#fff", cursor="hand2", corner_radius=5)
+        deleteBtn.place(x=235, y=220, width=100, height=35)
         deleteBtn.bind("<Return>", self.delete_product)
         deleteBtn.bind("<ButtonRelease-1>", self.delete_product)
 
@@ -107,11 +111,11 @@ class customersBilling:
         self.wrapper2 = ctk.CTkFrame(self.root)
         self.wrapper2.place(x=480, y=180, width=600, height=390)
 
-        self.style.configure("Treeview", background="#3c3c3c", foreground="white", fieldbackground="#333333",
+        self.style.configure("Treeview", background="#ebebeb", foreground="black", fieldbackground="#ebebeb",
                              rowheight=30,
-                             font=("Arial", 17))
-        self.style.map("Treeview", background=[("selected", "#0078D7")])
-        self.style.configure("Treeview.Heading", font=('Bell Gothic Std Black', 17))
+                             font=("Bell Gothic Std Black", 18))
+        self.style.map("Treeview", background=[("selected", "#333333")])
+        self.style.configure("Treeview.Heading", font=('Bell Gothic Std Black', 18))
         self.style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])  # Remove the borders
 
         self.product_table = ttk.Treeview(self.wrapper2, style="Treeview", columns=(
@@ -130,7 +134,6 @@ class customersBilling:
         self.product_table.heading("custId", text="ID")
         self.product_table.heading("custName", text="Name")
         self.product_table.heading("custBalance", text="Balance")
-        # self.product_table.heading("custPayType", text="Payment Type")
         self.product_table.heading("custStatus", text="Status")
 
         self.product_table["show"] = "headings"
@@ -138,7 +141,6 @@ class customersBilling:
         self.product_table.column("custId", width=50, minwidth=50)
         self.product_table.column("custName", width=100, minwidth=100)
         self.product_table.column("custBalance", width=100, minwidth=100)
-        # self.product_table.column("custPayType", width=100, minwidth=100)
         self.product_table.column("custStatus", width=100, minwidth=100)
 
         self.product_table.pack(fill=BOTH, expand=1)
@@ -210,7 +212,7 @@ class customersBilling:
             conn = sqlite3.connect(database=r'std.db')
             cursor = conn.cursor()
             if int(self.custPaidAmount.get()) > int(self.custDues.get()) or int(self.custPaidAmount.get()) < 0:
-                messagebox.showerror('Error', 'Please enter valid amount amount cannot be less or greater than dues!!')
+                messagebox.showerror('Error', 'Please enter valid amount cannot be less or greater than dues!!')
             else:
                 remainingBalance = int(self.custDues.get()) - int(self.custPaidAmount.get())
                 cursor.execute("SELECT * FROM customersDetails WHERE custName=? OR custId=?",

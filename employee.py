@@ -10,12 +10,12 @@ import customtkinter as ctk
 class employeeClass:
     def __init__(self, root):
         self.root = root
-        self.root.geometry("1100x600+200+148")
+        self.root.geometry("1100x600+250+190")
         self.root.title("UA")
         self.root.focus_force()
         self.root.resizable(False, False)
 
-        ctk.set_appearance_mode("System")  # Modes: system (default), light, dark
+        ctk.set_appearance_mode("light")  # Modes: system (default), light, dark
         ctk.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 
         # ========================================
@@ -36,44 +36,48 @@ class employeeClass:
 
         # Label Styling
         fontStyle = ("Bell Gothic Std Black", 17, 'bold')
+        fontStyleEntry = ("Bell Gothic Std Black", 17)
+        fontStyleBtn = ("Bell Gothic Std Black", 17)
 
         # ===== Icon image =====
         icon = PhotoImage(file='images/logo.png')
         self.root.iconphoto(False, icon)
 
         # ===== Style =====
-        self.style = ttk.Style(self.root)
+        style = ttk.Style(self.root)
 
         # ====== Title =======
-        self.title = ctk.CTkLabel(self.root, text="Return Products", font=("Brush Script MT", 38, "bold"))
+        self.title = ctk.CTkLabel(self.root, text="Employees Details", font=("Brush Script MT", 50, "bold"))
         self.title.pack(side=TOP, fill=X)
 
         # ===== Logo Image =====
-        stLogo = ctk.CTkImage(Image.open("images/logo.png"), size=(120, 120))
-        logoImage = (ctk.CTkLabel(self.root, image=stLogo))
-        logoImage.configure(text="")
-        logoImage.place(x=5, y=10, width=120, height=95)
+        # stLogo = ctk.CTkImage(Image.open("images/logo.png"), size=(120, 120))
+        # logoImage = (ctk.CTkLabel(self.root, image=stLogo))
+        # logoImage.configure(text="")
+        # logoImage.place(x=5, y=10, width=120, height=95)
 
         # ====== Search Frame ======
-        self.SearchFrame = ctk.CTkLabel(self.root, font=(fontStyle, 12, "bold"))
+        self.SearchFrame = ctk.CTkLabel(self.root)
         self.SearchFrame.pack(padx=300, pady=10, ipady=20, fill=X)
 
         # ====== Options ======
-        cmb_search = ctk.CTkComboBox(self.SearchFrame, variable=self.var_searchby,
-                                     values=("Select", "Email", "Name", "Contact"), state='readonly',
-                                     justify=CENTER, text_color=("#000"),
-                                     font=("Agency FB", 20, "bold"))
+        cmb_search = ctk.CTkOptionMenu(self.SearchFrame, variable=self.var_searchby,
+                                       values=("Select", "Email", "Name", "Contact"), dropdown_fg_color="#fff",
+                                       dropdown_hover_color="light blue",
+                                       dropdown_text_color="#000", state="readonly", text_color="#fff",
+                                       font=fontStyleEntry)
         cmb_search.place(x=10, y=15, width=180, height=35)
 
-        self.txtSearch = ctk.CTkEntry(self.SearchFrame, textvariable=self.var_searchtxt, font=(fontStyle, 15))
+        self.txtSearch = ctk.CTkEntry(self.SearchFrame, textvariable=self.var_searchtxt, font=fontStyleEntry)
         self.txtSearch.place(x=185, y=15, height=35)
 
-        btn_search = ctk.CTkButton(self.SearchFrame, text="Search", command=self.search, font=(fontStyle, 18),
+        btn_search = ctk.CTkButton(self.SearchFrame, text="Search", command=self.search, text_color="#fff",
+                                   font=fontStyleBtn,
                                    cursor="hand2").place(x=350, y=15, width=150, height=35)
 
         # ====== Title ======
-        title = ctk.CTkLabel(self.root, text="Employee Details", font=(fontStyle, 15, 'bold'),
-                             bg_color="#0f4d7d")
+        title = ctk.CTkLabel(self.root, text="Employee Details", font=fontStyle,
+                             bg_color="#0f4d7d", text_color="#fff")
         title.pack(padx=50, pady=10, fill=X)
 
         # ===== Content ======
@@ -93,14 +97,16 @@ class employeeClass:
         self.lblContact = ctk.CTkLabel(self.root, text="Contact", font=fontStyle)
         self.lblContact.place(x=xAxisThreeLabel, y=200)
 
-        self.txtEmpId = ctk.CTkEntry(self.root, textvariable=self.var_emp_id, font=(fontStyle, 15))
+        self.txtEmpId = ctk.CTkEntry(self.root, textvariable=self.var_emp_id, font=fontStyleEntry)
         self.txtEmpId.place(x=xAxisOneEntry, y=200, width=180)
-        cmb_gender = ctk.CTkComboBox(self.root, variable=self.var_gender,
-                                     values=("Select", "Male", "Female", "Other"), justify=CENTER,
-                                     font=(fontStyle, 15))
+        cmb_gender = ctk.CTkOptionMenu(self.root, variable=self.var_gender,
+                                       values=("Select", "Male", "Female", "Other"), dropdown_fg_color="#fff",
+                                       dropdown_hover_color="light blue",
+                                       dropdown_text_color="#000", state="readonly", text_color="#fff",
+                                       font=fontStyleEntry)
         cmb_gender.place(x=xAxisTwoEntry, y=200, width=180)
 
-        self.txtContact = ctk.CTkEntry(self.root, textvariable=self.var_contact, font=(fontStyle, 15))
+        self.txtContact = ctk.CTkEntry(self.root, textvariable=self.var_contact, font=fontStyleEntry)
         self.txtContact.place(x=xAxisThreeEntry, y=200, width=180)
 
         # ====== Row 2 ======
@@ -112,11 +118,11 @@ class employeeClass:
         self.lblDoj = ctk.CTkLabel(self.root, text="D.O.J", font=fontStyle)
         self.lblDoj.place(x=xAxisThreeLabel, y=240)
 
-        self.txtName = ctk.CTkEntry(self.root, textvariable=self.var_name, font=(fontStyle, 15))
+        self.txtName = ctk.CTkEntry(self.root, textvariable=self.var_name, font=fontStyleEntry)
         self.txtName.place(x=xAxisOneEntry, y=240, width=180)
-        self.txtDob = ctk.CTkEntry(self.root, textvariable=self.var_dob, font=(fontStyle, 15))
+        self.txtDob = ctk.CTkEntry(self.root, textvariable=self.var_dob, font=fontStyleEntry)
         self.txtDob.place(x=xAxisTwoEntry, y=240, width=180)
-        self.txtDoj = ctk.CTkEntry(self.root, textvariable=self.var_doj, font=(fontStyle, 15))
+        self.txtDoj = ctk.CTkEntry(self.root, textvariable=self.var_doj, font=fontStyleEntry)
         self.txtDoj.place(x=xAxisThreeEntry, y=240, width=180)
 
         # ====== Row 3 ======
@@ -127,13 +133,15 @@ class employeeClass:
         self.lblUtype = ctk.CTkLabel(self.root, text="User Type", font=fontStyle)
         self.lblUtype.place(x=xAxisThreeLabel, y=280)
 
-        self.txtEmail = ctk.CTkEntry(self.root, textvariable=self.var_email, font=(fontStyle, 15))
+        self.txtEmail = ctk.CTkEntry(self.root, textvariable=self.var_email, font=fontStyleEntry)
         self.txtEmail.place(x=xAxisOneEntry, y=280, width=180)
-        self.txtPass = ctk.CTkEntry(self.root, textvariable=self.var_pass, font=(fontStyle, 15))
+        self.txtPass = ctk.CTkEntry(self.root, textvariable=self.var_pass, font=fontStyleEntry)
         self.txtPass.place(x=xAxisTwoEntry, y=280, width=180)
-        cmb_utype = ctk.CTkComboBox(self.root, variable=self.var_utype,
-                                    values=("Admin", "Employee"), justify=CENTER,
-                                    font=(fontStyle, 15))
+        cmb_utype = ctk.CTkOptionMenu(self.root, variable=self.var_utype,
+                                      values=("Admin", "Employee"), dropdown_fg_color="#fff",
+                                      dropdown_hover_color="light blue",
+                                      dropdown_text_color="#000", state="readonly", text_color="#fff",
+                                      font=fontStyleEntry)
         cmb_utype.place(x=xAxisThreeEntry, y=280, width=180)
 
         # ====== Row 4 ======
@@ -142,36 +150,38 @@ class employeeClass:
         self.lblSalary = ctk.CTkLabel(self.root, text="Salary", font=fontStyle)
         self.lblSalary.place(x=450, y=330)
 
-        self.txtAddress = ctk.CTkTextbox(self.root, font=(fontStyle, 15))
+        self.txtAddress = ctk.CTkTextbox(self.root, font=fontStyleEntry, border_width=2)
         self.txtAddress.place(x=180, y=330, width=300, height=80)
-        self.txtSalary = ctk.CTkEntry(self.root, textvariable=self.var_salary, font=(fontStyle, 15))
+        self.txtSalary = ctk.CTkEntry(self.root, textvariable=self.var_salary, font=fontStyleEntry)
         self.txtSalary.place(x=550, y=330, width=180)
 
         # ====== Buttons ======
-        btnFontStyle = "Bell Gothic Std Black"
         self.addIcon = ctk.CTkImage(Image.open("images/add.png"), size=(30, 30))
-        self.btn_add = ctk.CTkButton(self.root, text="Add", image=self.addIcon, font=(btnFontStyle, 18),
+        self.btn_add = ctk.CTkButton(self.root, text="Add", image=self.addIcon, text_color="#fff", font=fontStyleBtn,
                                      cursor="hand2", compound=RIGHT)
         self.btn_add.place(x=640, y=370, width=110)
         self.btn_add.bind("<Return>", self.add)
         self.btn_add.bind("<ButtonRelease-1>", self.add)
 
         self.updateIcon = ctk.CTkImage(Image.open("images/update.png"), size=(30, 30))
-        self.btn_update = ctk.CTkButton(self.root, text="Update", image=self.updateIcon, font=(btnFontStyle, 18),
+        self.btn_update = ctk.CTkButton(self.root, text="Update", image=self.updateIcon, text_color="#fff",
+                                        font=fontStyleBtn,
                                         cursor="hand2", compound=RIGHT)
         self.btn_update.place(x=734, y=370, width=130)
         self.btn_update.bind("<Return>", self.update)
         self.btn_update.bind("<ButtonRelease-1>", self.update)
 
         self.deleteIcon = ctk.CTkImage(Image.open("images/delete.png"), size=(30, 30))
-        self.btn_delete = ctk.CTkButton(self.root, text="Delete", image=self.deleteIcon, font=(btnFontStyle, 18),
+        self.btn_delete = ctk.CTkButton(self.root, text="Delete", image=self.deleteIcon, text_color="#fff",
+                                        font=fontStyleBtn,
                                         cursor="hand2", compound=RIGHT)
         self.btn_delete.place(x=845, y=370, width=110)
         self.btn_delete.bind("<Return>", self.delete)
         self.btn_delete.bind("<ButtonRelease-1>", self.delete)
 
         self.clearIcon = ctk.CTkImage(Image.open("images/clear.png"), size=(30, 30))
-        self.btn_clear = ctk.CTkButton(self.root, text="Clear All", image=self.clearIcon, font=(btnFontStyle, 18),
+        self.btn_clear = ctk.CTkButton(self.root, text="Clear All", image=self.clearIcon, text_color="#fff",
+                                       font=fontStyleBtn,
                                        cursor="hand2", compound=RIGHT)
         self.btn_clear.place(x=940, y=370, width=130)
         self.btn_clear.bind("<Return>", self.clear)
@@ -181,12 +191,12 @@ class employeeClass:
         emp_frame = ctk.CTkFrame(self.root)
         emp_frame.place(x=0, y=450, relwidth=1, height=180)
 
-        self.style.configure("Treeview", background="#3c3c3c", foreground="white", fieldbackground="#333333",
-                             rowheight=30,
-                             font=("Arial", 17))
-        self.style.map("Treeview", background=[("selected", "#0078D7")])
-        self.style.configure("Treeview.Heading", font=('Bell Gothic Std Black', 17))
-        self.style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])  # Remove the borders
+        style.configure("Treeview", background="#ebebeb", foreground="black", fieldbackground="#ebebeb", rowheight=30,
+                        font=("Bell Gothic Std Black", 18))
+        style.map("Treeview", background=[("selected", "#333333")])
+        style.configure("Treeview.Heading", font=('Bell Gothic Std Black', 18))
+        style.layout("Treeview",
+                     [('Treeview.treearea', {'sticky': 'nswe'})])  # Remove the borders
 
         self.EmployeeTable = ttk.Treeview(emp_frame, style='Treeview', columns=(
             "eid", "name", "email", "gender", "contact", "dob", "doj", "pass", "utype", "address", "salary"))
@@ -237,7 +247,7 @@ class employeeClass:
         con = sqlite3.connect(database=r'std.db')
         cur = con.cursor()
         try:
-            self.addDate = datetime.now().strftime("%m/%d/%Y")
+            self.addDate = datetime.now().strftime("%d/%m/%Y")
             if self.var_emp_id.get() == "":
                 messagebox.showerror("Error", "Employee Id Must be required", parent=self.root)
             else:
@@ -324,7 +334,7 @@ class employeeClass:
             else:
                 cur.execute("SELECT * FROM employee WHERE eid=?", (self.var_emp_id.get(),))
                 row = cur.fetchone()
-                if row == None:
+                if row is None:
                     messagebox.showerror("Error", "Invalid Employee ID", parent=self.root)
                 else:
                     cur.execute(
@@ -357,11 +367,11 @@ class employeeClass:
             else:
                 cur.execute("SELECT * FROM employee WHERE eid=?", (self.var_emp_id.get(),))
                 row = cur.fetchone()
-                if row == None:
+                if row is None:
                     messagebox.showerror("Error", "Invalid Employee ID", parent=self.root)
                 else:
                     op = messagebox.askyesno("Confirm", "Do you really want to delete?", parent=self.root)
-                    if op == True:
+                    if op is True:
                         cur.execute("DELETE FROM employee WHERE eid=?", (self.var_emp_id.get(),))
                         con.commit()
                         messagebox.showinfo("Delete", "Employee Deleted Successfully", parent=self.root)

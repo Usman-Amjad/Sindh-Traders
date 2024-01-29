@@ -2,22 +2,21 @@
 import sqlite3
 from tkinter import *
 from tkinter import ttk, messagebox
-from PIL import Image
 import customtkinter as ctk
 
 
 class returnedItems:
     def __init__(self, root):
         self.root = root
-        self.root.geometry("1100x600+220+145")
+        self.root.geometry("1100x600+250+190")
         self.root.title("UA")
         # self.root.config(bg="#333333")
         self.root.focus_force()
 
         # ===== Style =====
-        self.style = ttk.Style(self.root)
+        style = ttk.Style(self.root)
 
-        ctk.set_appearance_mode("System")  # Modes: system (default), light, dark
+        ctk.set_appearance_mode("light")  # Modes: system (default), light, dark
         ctk.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 
         # ====== Icon Image ======
@@ -51,10 +50,10 @@ class returnedItems:
         self.title.pack(side=TOP, fill=X)
 
         # ===== Logo Image =====
-        self.logo = ctk.CTkImage(Image.open("images/logo.png"), size=(120, 120))
-        self.logoImage = ctk.CTkLabel(self.root, image=self.logo)
-        self.logoImage.configure(text="")
-        self.logoImage.place(x=5, y=10, width=120, height=95)
+        # self.logo = ctk.CTkImage(Image.open("images/logo.png"), size=(120, 120))
+        # self.logoImage = ctk.CTkLabel(self.root, image=self.logo)
+        # self.logoImage.configure(text="")
+        # self.logoImage.place(x=5, y=10, width=120, height=95)
 
         # ==============================================================
         self.product_Frame = ctk.CTkFrame(self.root)
@@ -92,7 +91,7 @@ class returnedItems:
         #     .place(x=30, y=610)
 
         # ====== Column 2 ======
-        txtOrderID = ctk.CTkEntry(self.product_Frame, textvariable=self.orderId, font=("goudy old style", 16))
+        txtOrderID = ctk.CTkEntry(self.product_Frame, textvariable=self.orderId, font=(fontStyle))
         txtOrderID.place(x=190, y=25, width=200)
 
         txtName = ctk.CTkEntry(self.product_Frame, textvariable=self.var_name, font=(fontStyle))
@@ -138,27 +137,31 @@ class returnedItems:
         self.SearchFrame = ctk.CTkFrame(self.root)
         self.SearchFrame.place(x=480, y=90, width=600, height=80)
 
-        cmb_search = ctk.CTkComboBox(self.SearchFrame, variable=self.var_searchby,
-                                     values=("Select", "Bill No", "Item Name"), state='readonly', justify=CENTER,
-                                     font=("Bell Gothic Std Black", 17), text_color="#3c3f41")
+        cmb_search = ctk.CTkOptionMenu(self.SearchFrame, variable=self.var_searchby,
+                                       values=("Select", "Bill No", "Item Name"),
+                                       font=("Bell Gothic Std Black", 17), dropdown_fg_color="#fff",
+                                       dropdown_hover_color="light blue",
+                                       dropdown_text_color="#000", state="readonly", text_color="#fff")
         cmb_search.place(x=10, y=15, width=180)
 
-        txt_search = ctk.CTkEntry(self.SearchFrame, textvariable=self.var_searchtxt, font=("Bell Gothic Std Black", 16))
+        txt_search = ctk.CTkEntry(self.SearchFrame, textvariable=self.var_searchtxt, font=("Bell Gothic Std Black", 17))
         txt_search.place(x=180, y=15, width=200, height=35)
         txt_search.focus()
 
-        btn_search = ctk.CTkButton(self.SearchFrame, text="Search", command=self.search, font=("Bell Gothic Std Black", 16), cursor="hand2").place(x=350, y=15, width=150, height=35)
+        btn_search = ctk.CTkButton(self.SearchFrame, text="Search", command=self.search,
+                                   font=("Bell Gothic Std Black", 17), cursor="hand2").place(x=350, y=15, width=150,
+                                                                                             height=35)
 
         # ====== Product Details ======
         p_Frame = ctk.CTkFrame(self.root)
         p_Frame.place(x=480, y=170, width=600, height=400)
 
-        self.style.configure("Treeview", background="#3c3c3c", foreground="white", fieldbackground="#333333",
-                             rowheight=30,
-                             font=("Arial", 17))
-        self.style.map("Treeview", background=[("selected", "#0078D7")])
-        self.style.configure("Treeview.Heading", font=('Bell Gothic Std Black', 17))
-        self.style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])  # Remove the borders
+        style.configure("Treeview", background="#ebebeb", foreground="black", fieldbackground="#ebebeb", rowheight=30,
+                        font=("Bell Gothic Std Black", 18))
+        style.map("Treeview", background=[("selected", "#333333")])
+        style.configure("Treeview.Heading", font=('Bell Gothic Std Black', 18))
+        style.layout("Treeview",
+                     [('Treeview.treearea', {'sticky': 'nswe'})])  # Remove the borders
 
         self.product_table = ttk.Treeview(p_Frame, style="Treeview", columns=(
             "orderId", "orderItemName", "perItemPrice", "orderQty", "orderTotalPrice", "orderDiscount", "orderNetPrice",
@@ -189,7 +192,7 @@ class returnedItems:
 
         self.product_table["show"] = "headings"
 
-        self.product_table.column("orderId", width=80, minwidth=80)
+        self.product_table.column("orderId", width=150, minwidth=150)
         self.product_table.column("orderItemName", width=150, minwidth=150)
         self.product_table.column("perItemPrice", width=150, minwidth=150)
         self.product_table.column("orderQty", width=100, minwidth=100)
@@ -209,19 +212,6 @@ class returnedItems:
 
         # ========================================================================================
 
-    def show(self):
-        con = sqlite3.connect(database=r'std.db')
-        cur = con.cursor()
-        try:
-            cur.execute(
-                "SELECT orderId, orderItemName, perItemPrice, orderQty, orderTotalPrice, orderDiscount, orderNetPrice, orderPayType, orderCustomerName, orderCustomerPhone, orderDate, orderTime FROM orders ORDER BY orderTime DESC")
-            rows = cur.fetchall()
-            self.product_table.delete(*self.product_table.get_children())
-            for row in rows:
-                self.product_table.insert('', END, values=row)
-        except Exception as ex:
-            messagebox.showerror("Error", f"Error due to : {str(ex)}", parent=self.root)
-
     def get_data(self, ev):
         try:
             f = self.product_table.focus()
@@ -236,7 +226,10 @@ class returnedItems:
             self.NetPrice.set(row[6])
             self.payType.set(row[7])
             self.customerName.set(row[8])
-            self.customerPhone.set(row[9])
+            if row[9] == "":
+                self.customerPhone.set("None")
+            else:
+                self.customerPhone.set(row[9])
             self.returnDate.set(row[10])
             self.returnTime.set(row[11])
         except (Exception,):
@@ -246,57 +239,68 @@ class returnedItems:
         try:
             con = sqlite3.connect(database=r'std.db')
             cur = con.cursor()
+
+            cur.execute("SELECT cid FROM orders WHERE orderId=?", (self.orderId.get(),))
+            catID = cur.fetchone()
+            catID = catID[0]
+
+            cur.execute("SELECT price FROM product WHERE cid=? AND name=?", (catID, self.var_name.get()))
+            buyingPrice = cur.fetchone()
+            buyingPrice = buyingPrice[0]
+
             orderStatus = 'returned'
-            total = int(self.var_price.get()) * int(self.var_qty.get())
-            netPrice = int(total) - int(self.Discount.get())
+
+            total = float(buyingPrice) * float(self.var_qty.get())
+
+            netPrice = float(total) - float(self.Discount.get())
+
             cur.execute("SELECT * FROM orders WHERE orderId=?", (self.orderId.get(),))
             row = cur.fetchone()
-            if self.orderId.get() == "":
-                messagebox.showerror("Error", "Please Select Product From List", parent=self.root)
-            else:
-                cur.execute("SELECT * FROM orders WHERE orderId=?", (self.orderId.get(),))
-                row = cur.fetchone()
-                if row is None:
-                    messagebox.showerror("Error", "Invalid Product", parent=self.root)
-                else:
-                    cur.execute(
-                        "UPDATE product SET qty = qty+?, totalPrice= totalPrice+? WHERE name=? AND status='Active'",
-                        (
-                            self.var_qty.get(),
-                            total,
-                            self.var_name.get(),
-                        ))
-                    con.commit()
-                    cur.execute(
-                        "INSERT INTO returnedOrders(orderId, orderItemName, perItemPrice, orderQty, orderTotalPrice, orderStatus, orderDiscount, orderNetPrice, orderPayType, orderCustomerName, orderCustomerPhone, orderDate, orderTime) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                        (
-                            self.orderId.get(),
-                            self.var_name.get(),
-                            self.var_price.get(),
-                            self.var_qty.get(),
-                            total,
-                            orderStatus,
-                            self.Discount.get(),
-                            self.NetPrice.get(),
-                            self.payType.get(),
-                            self.customerName.get(),
-                            self.customerPhone.get(),
-                            self.returnDate.get(),
-                            self.returnTime.get(),
-                        ))
-                    con.commit()
-                    messagebox.showinfo("Success", "Product Updated Successfully", parent=self.root)
-                    cur.execute(
-                        "DELETE FROM orders WHERE orderId=? AND orderItemName=?",
-                        (self.orderId.get(), self.var_name.get()))
-                    con.commit()
+            op = messagebox.askyesno("Confirm", "Do you want to return this product?", parent=self.root)
+            if self.orderId.get() == "" or row is None:
+                messagebox.showerror("Error", "Invalid or Empty Order ID", parent=self.root)
+            elif op is True:
+                cur.execute(
+                    "UPDATE product SET qty = qty + ?, totalPrice = totalPrice + ? WHERE name = ? AND cid = ?",
+                    (
+                        self.var_qty.get(),
+                        total,
+                        self.var_name.get(),
+                        catID,
+                    ))
+                con.commit()
+                cur.execute(
+                    "INSERT INTO returnedOrders(orderId, orderItemName, perItemPrice, orderQty, orderTotalPrice, orderStatus, orderDiscount, orderNetPrice, orderPayType, orderCustomerName, orderCustomerPhone, orderDate, orderTime) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    (
+                        self.orderId.get(),
+                        self.var_name.get(),
+                        self.var_price.get(),
+                        self.var_qty.get(),
+                        total,
+                        orderStatus,
+                        self.Discount.get(),
+                        self.NetPrice.get(),
+                        self.payType.get(),
+                        self.customerName.get(),
+                        self.customerPhone.get(),
+                        self.returnDate.get(),
+                        self.returnTime.get(),
+                    ))
+                con.commit()
+                messagebox.showinfo("Success", "Product Updated Successfully", parent=self.root)
 
-                    cur.execute(
-                        "UPDATE customersDetails SET custBalance= custBalance - ? WHERE custName=? ",
-                        (netPrice, self.customerName.get()))
-                    con.commit()
-                    con.close()
-                    self.show()
+                cur.execute(
+                    "DELETE FROM orders WHERE orderId=? AND cid=? AND orderItemName=?",
+                    (self.orderId.get(), catID, self.var_name.get()))
+                con.commit()
+
+                cur.execute(
+                    "UPDATE customersDetails SET custBalance = custBalance - ? WHERE custName=? ",
+                    (netPrice, self.customerName.get()))
+                con.commit()
+                con.close()
+                self.show()
+                self.clear(e)
         except Exception as ex:
             messagebox.showerror("Error", f"Error due to : {str(ex)}", parent=self.root)
 
@@ -311,6 +315,19 @@ class returnedItems:
         self.var_searchby.set("Select")
 
         self.show()
+
+    def show(self):
+        con = sqlite3.connect(database=r'std.db')
+        cur = con.cursor()
+        try:
+            cur.execute(
+                "SELECT orderId, orderItemName, perItemPrice, orderQty, orderTotalPrice, orderDiscount, orderNetPrice, orderPayType, orderCustomerName, orderCustomerPhone, orderDate, orderTime FROM orders ORDER BY orderTime DESC")
+            rows = cur.fetchall()
+            self.product_table.delete(*self.product_table.get_children())
+            for row in rows:
+                self.product_table.insert('', END, values=row)
+        except Exception as ex:
+            messagebox.showerror("Error", f"Error due to : {str(ex)}", parent=self.root)
 
     def search(self):
         try:
@@ -346,211 +363,3 @@ if __name__ == "__main__":
     root = ctk.CTk()
     obj = returnedItems(root)
     root.mainloop()
-
-# # -------Importing Modules
-# from tkinter import *
-# from tkinter import ttk, messagebox
-# import sqlite3
-#
-#
-# class returnedItems:
-#     def __init__(self, root):
-#         self.root = root
-#         self.root.geometry("1100x600+200+110")
-#         self.root.title("UA")
-#         self.root.config(bg="#333333")
-#         self.root.focus_force()
-#
-#         # ===== Variables =====
-#         self.cat_list = []  # category List fetching Variable
-#
-#         self.var_cat_id = StringVar()
-#         self.var_name = StringVar()
-#         self.search_cat = StringVar()  # Dropdown Category Variable
-#         self.returnAmount = StringVar()  # Returning Amount Variable
-#         self.productName = StringVar()  # Product Name Variable
-#
-#         self.fetch_cat_loc()  # Fetching Category List
-#
-#         # ===== Style =====
-#         style = ttk.Style(self.root)
-#         style.theme_use('clam')
-#
-#         # ====== Title ======
-#         lbl_title = Label(self.root, text="Return Items", font=("Brush Script MT", 30), bg="#202020",
-#                           fg="white").pack(side=TOP, fill=X)
-#
-#         # ===== Product Search Frame =====
-#         ProductFrame2 = Frame(self.root, bg="#FAFAFA", bd=2, relief=RIDGE)
-#         ProductFrame2.place(x=10, y=60, width=398, height=350)
-#
-#         selectCategory = Label(ProductFrame2, text="Select Category", font=("times new roman", 15), bg="white").place(
-#             x=5, y=8)
-#         searchLoc = ttk.Combobox(ProductFrame2, font=("times new roman", 13), textvariable=self.search_cat,
-#                                  values=self.cat_list, state="readonly", justify=CENTER)
-#         searchLoc.place(x=5, y=45, width=120)
-#         searchLoc.current(0)
-#         # searchLoc.bind("<<ComboboxSelected>>", self.fetch_cat_loc)
-#
-#         lbl_p_name = Label(ProductFrame2, text="Product Name", font=("times new roman", 15), bg="white").place(
-#             x=5, y=80)
-#         txt_p_name = Entry(ProductFrame2, textvariable=self.productName, font=("times new roman", 15),
-#                            bg="light yellow").place(x=5, y=110, width=150, height=22)
-#
-#         lbl_p_price = Label(ProductFrame2, text="Return Amount", font=("times new roman", 15), bg="white").place(
-#             x=5, y=140)
-#         txt_p_price = Entry(ProductFrame2, textvariable=self.returnAmount, font=("times new roman", 15),
-#                             bg="light yellow").place(x=5, y=170, width=150, height=22)
-#
-#         btnSearch = Button(ProductFrame2, text="Search", font=("goudy old style", 15), bg="#4caf50",
-#                            fg="white", cursor="hand2")
-#         btnSearch.place(x=5, y=220, width=100, height=30)
-#         btnSearch.bind("<Return>", self.search)
-#         btnSearch.bind("<ButtonRelease-1>", self.search)
-#
-#         btn_add = Button(ProductFrame2, text="Add", font=("goudy old style", 15), bg="#4caf50",
-#                          fg="white", cursor="hand2")
-#         btn_add.place(x=110, y=220, width=100, height=30)
-#         btn_add.bind("<Return>", self.add)
-#         btn_add.bind("<ButtonRelease-1>", self.add)
-#
-#         btn_delete = Button(ProductFrame2, text="Delete", font=("goudy old style", 15), bg="red",
-#                             fg="white", cursor="hand2")
-#         btn_delete.place(x=215, y=220, width=100, height=30)
-#         btn_delete.bind("<Return>", self.delete)
-#         btn_delete.bind("<ButtonRelease-1>", self.delete)
-#
-#         # ====== Category Details ======
-#         cat_frame = Frame(self.root)
-#         cat_frame.place(x=409, y=60, width=688, height=350)
-#
-#         scrolly = Scrollbar(cat_frame, orient=VERTICAL)
-#         scrollx = Scrollbar(cat_frame, orient=HORIZONTAL)
-#
-#         self.categoryTable = ttk.Treeview(cat_frame, columns=("cid", "category", "name", "price"), yscrollcommand=scrolly.set,
-#                                           xscrollcommand=scrollx.set)
-#         scrollx.pack(side=BOTTOM, fill=X)
-#         scrolly.pack(side=RIGHT, fill=Y)
-#         scrollx.config(command=self.categoryTable.xview)
-#         scrolly.config(command=self.categoryTable.yview)
-#
-#         self.categoryTable.heading("cid", text="Category ID")
-#         self.categoryTable.heading("category", text="Category")
-#         self.categoryTable.heading("name", text="Name")
-#         self.categoryTable.heading("price", text="Price")
-#
-#         self.categoryTable["show"] = "headings"
-#
-#         self.categoryTable.column("cid", width=70)
-#         self.categoryTable.column("category", width=100)
-#         self.categoryTable.column("name", width=100)
-#         self.categoryTable.column("price", width=100)
-#
-#         self.categoryTable.pack(fill=BOTH, expand=1)
-#
-#         self.categoryTable.bind("<ButtonRelease-1>", self.get_data)
-#         self.show()
-#
-#     # ========================= Functions ==============================
-#
-#     def fetch_cat_loc(self):
-#         try:
-#             self.cat_list.append("Empty")
-#             con = sqlite3.connect(database=r'std.db')
-#             cur = con.cursor()
-#
-#             cur.execute("SELECT name FROM category")
-#             loc = cur.fetchall()
-#             if len(loc) > 0:
-#                 del self.cat_list[:]
-#                 self.cat_list.append("Select")
-#                 for i in loc:
-#                     self.cat_list.append(i[0])
-#
-#         except Exception as ex:
-#             messagebox.showerror("Error", f"Error due to : {str(ex)}", parent=self.root)
-#
-#     def search(self, e):
-#         conn = sqlite3.connect(database=r'std.db')
-#         cursor = conn.cursor()
-#
-#         if self.search_cat.get() in self.cat_list:
-#             cursor.execute(
-#                 "SELECT pid, category, name, price FROM product WHERE category LIKE '%" + self.search_cat.get() + "%' AND status='Active'")
-#             rows = cursor.fetchall()
-#             if len(rows) != 0:
-#                 self.categoryTable.delete(*self.categoryTable.get_children())
-#                 for row in rows:
-#                     self.categoryTable.insert('', END, values=row)
-#             else:
-#                 messagebox.showerror("Error", "No record found!!!", parent=self.root)
-#         else:
-#             messagebox.showerror("Error", "Select Valid Category", parent=self.root)
-#
-#     def add(self, e):
-#         con = sqlite3.connect(database=r'std.db')
-#         cur = con.cursor()
-#         try:
-#             if self.var_name.get() == "":
-#                 messagebox.showerror("Error", "Category Name must be required", parent=self.root)
-#             else:
-#                 cur.execute("SELECT * FROM category WHERE name=?", (self.var_name.get(),))
-#                 row = cur.fetchone()
-#                 if row is not None:
-#                     messagebox.showerror("Error", "Category already present, try different", parent=self.root)
-#                 else:
-#                     cur.execute("INSERT INTO category(name) values(?)", (self.var_name.get(),))
-#                     con.commit()
-#                     messagebox.showinfo("Success", "Category Added Successfully", parent=self.root)
-#                     self.show()
-#                     self.var_cat_id.set("")
-#                     self.var_name.set("")
-#         except Exception as ex:
-#             messagebox.showerror("Error", f"Error due to : {str(ex)}", parent=self.root)
-#
-#     def show(self):
-#         con = sqlite3.connect(database=r'std.db')
-#         cur = con.cursor()
-#         try:
-#             cur.execute("SELECT * FROM category")
-#             rows = cur.fetchall()
-#             self.categoryTable.delete(*self.categoryTable.get_children())
-#             for row in rows:
-#                 self.categoryTable.insert('', END, values=row)
-#         except Exception as ex:
-#             messagebox.showerror("Error", f"Error due to : {str(ex)}", parent=self.root)
-#
-#     def get_data(self, ev):
-#         f = self.categoryTable.focus()
-#         content = (self.categoryTable.item(f))
-#         row = content['values']
-#         self.productName.set(row[2])
-#
-#     def delete(self, e):
-#         con = sqlite3.connect(database=r'std.db')
-#         cur = con.cursor()
-#         try:
-#             if self.var_cat_id.get() == "":
-#                 messagebox.showerror("Error", "Please Select Category From The List", parent=self.root)
-#             else:
-#                 cur.execute("SELECT * FROM category WHERE cid=?", (self.var_cat_id.get(),))
-#                 row = cur.fetchone()
-#                 if row is None:
-#                     messagebox.showerror("Error", "Error, Please try Again", parent=self.root)
-#                 else:
-#                     op = messagebox.askyesno("Confirm", "Do you really want to delete?", parent=self.root)
-#                     if op is True:
-#                         cur.execute("DELETE FROM category WHERE cid=?", (self.var_cat_id.get(),))
-#                         con.commit()
-#                         messagebox.showinfo("Delete", "Category Deleted Successfully", parent=self.root)
-#                         self.show()
-#                         self.var_cat_id.set("")
-#                         self.var_name.set("")
-#         except Exception as ex:
-#             messagebox.showerror("Error", f"Error due to : {str(ex)}", parent=self.root)
-#
-#
-# if __name__ == "__main__":
-#     root = Tk()
-#     obj = returnedItems(root)
-#     root.mainloop()

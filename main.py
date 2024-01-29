@@ -1,7 +1,5 @@
-from ctypes import windll
 from tkinter import *
 import customtkinter as ctk
-from tkinter import ttk
 from PIL import ImageTk, Image
 from employee import employeeClass
 from category import categoryClass
@@ -21,13 +19,10 @@ class stockManagement:
         self.root.geometry("1425x700+50+20")
         self.root.title("Sindh Traders")
 
-        ctk.set_appearance_mode("System")  # Modes: system (default), light, dark
+        self.root.protocol("WM_DELETE_WINDOW", self.root.quit)
+
+        ctk.set_appearance_mode("light")  # Modes: system (default), light, dark
         ctk.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
-
-        windll.shcore.SetProcessDpiAwareness(2)
-
-        # ===== Style =====
-        style = ttk.Style(root)
 
         # ===== Background Image =====
         self.bgFrame = Frame()
@@ -42,7 +37,9 @@ class stockManagement:
         self.root.iconphoto(False, icon)
 
         # ====== Title =======
-        self.title = ctk.CTkLabel(self.root, text="Sindh Traders", bg_color="#eeba2b", text_color="#262521",
+        self.titleFrame = ctk.CTkFrame(self.root, bg_color="#eeba2b", corner_radius=5)
+        self.titleFrame.pack(side=TOP, fill=X)
+        self.title = ctk.CTkLabel(self.titleFrame, text="Sindh Traders", bg_color="#eeba2b", text_color="#fff",
                                   font=("Brush Script MT", 70, "bold"), anchor="n")
         self.title.pack(side=TOP, fill=X)
 
@@ -51,61 +48,64 @@ class stockManagement:
         # self.logoImage = Label(self.root, image=self.logo).place(x=5, y=5, width=120, height=80)
 
         # ===== Menu Bar =====
-        foregroundColor = '#262521'
-        hoverColor = '#0e0d0b'
-        self.lbl_menu = Frame(bg="#262521")
+        foregroundColor = '#0e0d0b'
+        fontColor = "#fff"
+        hoverColor = '#1e1f22'
+        textColor = "#fff"
+        borderColor = "#e6b42b"
+        self.lbl_menu = Frame(bg="#fff")
         self.lbl_menu.pack(side=TOP, fill=X, ipady=20)
 
-        self.btnEmployee = ctk.CTkButton(self.lbl_menu, text="EMPLOYEE", command=self.employee, border_width=1,
+        self.btnEmployee = ctk.CTkButton(self.lbl_menu, text="EMPLOYEE", command=self.employee, border_width=2,
                                          font=("times new roman", 15, "bold"), fg_color=foregroundColor,
-                                         hover_color=hoverColor, corner_radius=5, cursor="hand2")
+                                         hover_color=hoverColor, text_color=fontColor, border_color=borderColor, corner_radius=5, cursor="hand2")
         self.btnEmployee.place(x=5, y=5, width=130, height=30)
 
-        self.btnCategory = ctk.CTkButton(self.lbl_menu, text="CATEGORY", command=self.category, border_width=1,
+        self.btnCategory = ctk.CTkButton(self.lbl_menu, text="CATEGORY", command=self.category, border_width=2,
                                          font=("times new roman", 15, "bold"), fg_color=foregroundColor,
-                                         hover_color=hoverColor, corner_radius=5, cursor="hand2")
+                                         hover_color=hoverColor, text_color=fontColor, border_color=borderColor, corner_radius=5, cursor="hand2")
         self.btnCategory.place(x=110, y=5, width=130, height=30)
 
-        self.btnLocation = ctk.CTkButton(self.lbl_menu, text="LOCATIONS", command=self.location, border_width=1,
+        self.btnLocation = ctk.CTkButton(self.lbl_menu, text="LOCATIONS", command=self.location, border_width=2,
                                          font=("times new roman", 15, "bold"), fg_color=foregroundColor,
-                                         hover_color=hoverColor, corner_radius=5, cursor="hand2")
+                                         hover_color=hoverColor, text_color=fontColor, border_color=borderColor, corner_radius=5, cursor="hand2")
         self.btnLocation.place(x=215, y=5, width=130, height=30)
 
         self.btnAddCustomers = ctk.CTkButton(self.lbl_menu, text="ADD CUSTOMERS", command=self.AddCustomers,
-                                             border_width=1,
+                                             border_width=2,
                                              font=("times new roman", 15, "bold"), fg_color=foregroundColor,
-                                             hover_color=hoverColor, corner_radius=5, cursor="hand2")
+                                             hover_color=hoverColor, text_color=fontColor, border_color=borderColor, corner_radius=5, cursor="hand2")
         self.btnAddCustomers.place(x=320, y=5, width=180, height=30)
 
-        self.btnProduct = ctk.CTkButton(self.lbl_menu, text="PRODUCT", command=self.product, border_width=1,
+        self.btnProduct = ctk.CTkButton(self.lbl_menu, text="PRODUCT", command=self.product, border_width=2,
                                         font=("times new roman", 15, "bold"), fg_color=foregroundColor,
-                                        hover_color=hoverColor, corner_radius=5, cursor="hand2")
+                                        hover_color=hoverColor, text_color=fontColor, border_color=borderColor, corner_radius=5, cursor="hand2")
         self.btnProduct.place(x=465, y=5, width=110, height=30)
 
-        self.btnBilling = ctk.CTkButton(self.lbl_menu, text="BILLING", command=self.billing, border_width=1,
+        self.btnBilling = ctk.CTkButton(self.lbl_menu, text="BILLING", command=self.billing, border_width=2,
                                         font=("times new roman", 15, "bold"), fg_color=foregroundColor,
-                                        hover_color=hoverColor, corner_radius=5, cursor="hand2")
+                                        hover_color=hoverColor, text_color=fontColor, border_color=borderColor, corner_radius=5, cursor="hand2")
         self.btnBilling.place(x=554, y=5, width=90, height=30)
 
         self.btnCustomersBilling = ctk.CTkButton(self.lbl_menu, text="PAYMENT RECOVERY", command=self.paymentRecovery,
-                                                 border_width=1,
+                                                 border_width=2,
                                                  font=("times new roman", 15, "bold"), fg_color=foregroundColor,
-                                                 hover_color=hoverColor, corner_radius=5, cursor="hand2")
+                                                 hover_color=hoverColor, text_color=fontColor, border_color=borderColor, corner_radius=5, cursor="hand2")
         self.btnCustomersBilling.place(x=628, y=5, width=220, height=30)
 
-        self.btnReturnedItems = ctk.CTkButton(self.lbl_menu, text="RETURN", command=self.returnedItem, border_width=1,
+        self.btnReturnedItems = ctk.CTkButton(self.lbl_menu, text="RETURN", command=self.returnedItem, border_width=2,
                                               font=("times new roman", 15, "bold"), fg_color=foregroundColor,
-                                              hover_color=hoverColor, corner_radius=5, cursor="hand2")
+                                              hover_color=hoverColor, text_color=fontColor, border_color=borderColor, corner_radius=5, cursor="hand2")
         self.btnReturnedItems.place(x=805, y=5, width=90, height=30)
 
-        self.btnSummary = ctk.CTkButton(self.lbl_menu, text="SUMMARY", command=self.summary, border_width=1,
+        self.btnSummary = ctk.CTkButton(self.lbl_menu, text="SUMMARY", command=self.summary, border_width=2,
                                         font=("times new roman", 15, "bold"), fg_color=foregroundColor,
-                                        hover_color=hoverColor, corner_radius=5, cursor="hand2")
+                                        hover_color=hoverColor, text_color=fontColor, border_color=borderColor, corner_radius=5, cursor="hand2")
         self.btnSummary.place(x=878, y=5, width=110, height=30)
 
-        self.btnExpenses = ctk.CTkButton(self.lbl_menu, text="EXPENSES", command=self.expenses, border_width=1,
+        self.btnExpenses = ctk.CTkButton(self.lbl_menu, text="EXPENSES", command=self.expenses, border_width=2,
                                          font=("times new roman", 15, "bold"), fg_color=foregroundColor,
-                                         hover_color=hoverColor, corner_radius=5, cursor="hand2")
+                                         hover_color=hoverColor, text_color=fontColor, border_color=borderColor, corner_radius=5, cursor="hand2")
         self.btnExpenses.place(x=968, y=5, width=110, height=30)
 
     def employee(self):

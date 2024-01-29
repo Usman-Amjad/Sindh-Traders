@@ -8,11 +8,11 @@ import sqlite3
 class categoryClass():
     def __init__(self, root):
         self.root = root
-        self.root.geometry("800x500+450+148")
+        self.root.geometry("800x500+450+190")
         self.root.title("Category")
         self.root.focus_force()
 
-        ctk.set_appearance_mode("System")  # Modes: system (default), light, dark
+        ctk.set_appearance_mode("light")  # Modes: system (default), light, dark
         ctk.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
 
         # ===== Variables =====
@@ -26,34 +26,34 @@ class categoryClass():
         self.root.iconphoto(False, icon)
 
         # ====== Title ======
-        self.lbl_title = ctk.CTkLabel(self.root, text="Manage Product Category", font=("Brush Script MT", 50))
+        self.lbl_title = ctk.CTkLabel(self.root, text="Manage Product Category", font=("Brush Script MT", 50, "bold"))
         self.lbl_title.pack(side=TOP, fill=X)
 
         self.lbl_name = ctk.CTkLabel(self.root, text="Enter Category Name", font=("Agency FB", 30))
         self.lbl_name.place(x=50, y=120)
 
-        self.txt_name = ctk.CTkEntry(self.root, textvariable=self.var_name, font=("Agency FB", 20))
+        self.txt_name = ctk.CTkEntry(self.root, textvariable=self.var_name, font=("Bell Gothic Std Black", 20))
         self.txt_name.place(x=50, y=170, width=300, height=40)
         self.txt_name.focus()
 
-        btn_add = ctk.CTkButton(self.root, text="Add", font=("Agency FB", 20), cursor="hand2")
+        btn_add = ctk.CTkButton(self.root, text="Add", font=("Bell Gothic Std Black", 20), text_color="#fff", cursor="hand2")
         btn_add.place(x=110, y=230, width=100, height=35)
         btn_add.bind("<Return>", self.add)
         btn_add.bind("<ButtonRelease-1>", self.add)
 
-        btn_delete = ctk.CTkButton(self.root, text="Delete", font=("Agency FB", 20), cursor="hand2")
+        btn_delete = ctk.CTkButton(self.root, text="Delete", font=("Bell Gothic Std Black", 20), text_color="#fff", cursor="hand2")
         btn_delete.place(x=210, y=230, width=100, height=35)
         btn_delete.bind("<Return>", self.delete)
         btn_delete.bind("<ButtonRelease-1>", self.delete)
 
         # ====== Category Details ======
-        cat_frame = ctk.CTkFrame(self.root)
+        cat_frame = ctk.CTkFrame(self.root, border_width=20, border_color="#333333")
         cat_frame.place(x=350, y=100, width=500, height=450)
 
-        style.configure("Treeview", background="#333333", foreground="white", fieldbackground="#333333", rowheight=30,
-                        font=("Arial", 18))
-        style.map("Treeview", background=[("selected", "#0078D7")])
-        style.configure("Treeview.Heading", font=('Constantia', 18))
+        style.configure("Treeview", background="#ebebeb", foreground="black", fieldbackground="#ebebeb", rowheight=30,
+                        font=("Bell Gothic Std Black", 18))
+        style.map("Treeview", background=[("selected", "#333333")])
+        style.configure("Treeview.Heading", font=('Bell Gothic Std Black', 18))
         style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])  # Remove the borders
 
         self.categoryTable = ttk.Treeview(cat_frame, style="Treeview", columns=("cid", "name"))
@@ -90,12 +90,13 @@ class categoryClass():
                 if row is not None:
                     messagebox.showerror("Error", "Category already present, try different", parent=self.root)
                 else:
-                    cur.execute("INSERT INTO category(name) values(?)", (self.var_name.get(),))
+                    cur.execute("INSERT INTO category(name) values(?)", (self.var_name.get().capitalize(),))
                     con.commit()
                     messagebox.showinfo("Success", "Category Added Successfully", parent=self.root)
                     self.show()
                     self.var_cat_id.set("")
                     self.var_name.set("")
+                    self.txt_name.focus()
         except Exception as ex:
             messagebox.showerror("Error", f"Error due to : {str(ex)}", parent=self.root)
 

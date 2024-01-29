@@ -9,11 +9,11 @@ from PIL import Image
 class locationClass:
     def __init__(self, root):
         self.root = root
-        self.root.geometry("1100x500+200+148")
+        self.root.geometry("1100x500+250+190")
         self.root.title("ASB")
         self.root.focus_force()
 
-        ctk.set_appearance_mode("System")  # Modes: system (default), light, dark
+        ctk.set_appearance_mode("light")  # Modes: system (default), light, dark
         ctk.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 
         # ===== Variables =====
@@ -22,23 +22,23 @@ class locationClass:
         self.address = StringVar()
 
         # ===== Style =====
-        self.style = ttk.Style(self.root)
+        style = ttk.Style(self.root)
 
         # ====== Icon Image ======
         icon = PhotoImage(file='images/logo.png')
         self.root.iconphoto(False, icon)
 
         # ====== Title ======
-        self.lbl_title = ctk.CTkLabel(self.root, text="Manage Location", font=("Brush Script MT", 50))
+        self.lbl_title = ctk.CTkLabel(self.root, text="Manage Location", font=("Brush Script MT", 50, "bold"))
         self.lbl_title.pack(side=TOP, fill=X)
 
         # ====== Logo ======
-        self.logo = ctk.CTkImage(Image.open("images/logo.png"), size=(120, 120))
-        self.logoImage = ctk.CTkLabel(self.root, image=self.logo)
-        self.logoImage.configure(text="")
-        self.logoImage.place(x=5, y=10, width=120, height=95)
+        # self.logo = ctk.CTkImage(Image.open("images/logo.png"), size=(120, 120))
+        # self.logoImage = ctk.CTkLabel(self.root, image=self.logo)
+        # self.logoImage.configure(text="")
+        # self.logoImage.place(x=5, y=10, width=120, height=95)
 
-        self.lbl_name = ctk.CTkLabel(self.root, text="Name \t             Address", font=("goudy old style", 25))
+        self.lbl_name = ctk.CTkLabel(self.root, text="Name \t             Address", font=("goudy old style", 25, "bold"))
         self.lbl_name.place(x=50, y=105)
 
         self.txt_name = ctk.CTkEntry(self.root, textvariable=self.var_name, font=("Bell Gothic Std Black", 18))
@@ -64,12 +64,12 @@ class locationClass:
         loc_frame = ctk.CTkFrame(self.root)
         loc_frame.place(x=700, y=100, width=500, height=500)
 
-        self.style.configure("Treeview", background="#3c3c3c", foreground="white", fieldbackground="#333333",
-                             rowheight=30,
-                             font=("Arial", 17))
-        self.style.map("Treeview", background=[("selected", "#0078D7")])
-        self.style.configure("Treeview.Heading", font=('Bell Gothic Std Black', 17))
-        self.style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])  # Remove the borders
+        style.configure("Treeview", background="#ebebeb", foreground="black", fieldbackground="#ebebeb", rowheight=30,
+                        font=("Bell Gothic Std Black", 18))
+        style.map("Treeview", background=[("selected", "#333333")])
+        style.configure("Treeview.Heading", font=('Bell Gothic Std Black', 18))
+        style.layout("Treeview",
+                     [('Treeview.treearea', {'sticky': 'nswe'})])  # Remove the borders
 
         self.locationTable = ttk.Treeview(loc_frame, style="Treeview", columns=("lid", "name", "address"))
         for column in self.locationTable["columns"]:
@@ -83,15 +83,15 @@ class locationClass:
         scrollx.pack(side=BOTTOM, fill=X)
         self.locationTable.configure(xscrollcommand=scrollx.set)
 
-        self.locationTable.heading("lid", text="Location ID")
+        self.locationTable.heading("lid", text="ID")
         self.locationTable.heading("name", text="Name")
         self.locationTable.heading("address", text="Address")
 
         self.locationTable["show"] = "headings"
 
         self.locationTable.column("lid", width=60, minwidth=60)
-        self.locationTable.column("name", width=100, minwidth=100)
-        self.locationTable.column("address", width=100)
+        self.locationTable.column("name", width=200, minwidth=200)
+        self.locationTable.column("address", width=200, minwidth=200)
 
         self.locationTable.pack(fill=BOTH, expand=1)
 
